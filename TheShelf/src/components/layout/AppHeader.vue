@@ -1,0 +1,18 @@
+<template>
+  <div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">{{ header }}</h1>
+  </div>
+</template>
+
+<script setup lang="ts">
+const props = defineProps({
+  header: {
+    type: String,
+    required: true
+  }
+})
+
+props.header
+</script>
+
+<style scoped></style>
