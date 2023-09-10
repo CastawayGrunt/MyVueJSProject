@@ -203,7 +203,7 @@ export default {
   },
   computed: {
     displayName(): string {
-      console.log(this.userStore.user)
+      console.log('user data', this.userStore.user)
 
       let displayName = ''
       if (this.userStore.user === null) {

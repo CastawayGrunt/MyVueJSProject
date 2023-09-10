@@ -1,7 +1,7 @@
 <template>
   <!-- emiting events with parameters https://www.nightprogrammer.com/vue-js/emit-event-parameters-parent-component-vuejs/ -->
   <form
-    class="d-sm-inline-block form-inline mr-auto ml-md-3 my-md-0 mw-100 navbar-search"
+    class="d-sm-inline-block form-inline mr-md-auto my-md-0 mw-100 navbar-search"
     @submit.prevent="$emit('onSubmit', query)"
   >
     <div class="input-group">
@@ -9,7 +9,7 @@
         name="search-bar"
         type="text"
         class="form-control bg-white border-primary border-1 small"
-        placeholder="Search for..."
+        :placeholder="placeholder"
         aria-label="Search"
         aria-describedby="basic-addon2"
         v-model.trim="query"
@@ -29,6 +29,13 @@ export default {
   data() {
     return {
       query: ''
+    }
+  },
+  props: {
+    placeholder: {
+      type: String,
+      required: false,
+      default: 'Search'
     }
   }
 }
