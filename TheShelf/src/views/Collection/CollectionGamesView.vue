@@ -1,7 +1,7 @@
 <template>
   <div class="d-flex flex-column flex-md-row justify-content-end mb-2">
-    <SearchBar @onSubmit="filterGames" />
-    <RouterLink to="/collection/add" class="btn btn-primary mt-2"> Add Game </RouterLink>
+    <SearchBar @onSubmit="filterGames" placeholder="Search Collection" />
+    <RouterLink to="/collection/add" class="btn btn-primary mt-2 mt-md-0"> Add Game </RouterLink>
   </div>
   <div>
     <div class="row" v-if="listPopulated">
