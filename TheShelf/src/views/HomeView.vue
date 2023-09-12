@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import AppHomeNav from '../components/layout/AppHomeNav.vue'
-</script>
-
 <template>
   <!-- Page Wrapper -->
   <div id="wrapper" class="d-flex flex-column h-100">
@@ -22,3 +18,7 @@ import AppHomeNav from '../components/layout/AppHomeNav.vue'
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import AppHomeNav from '../components/layout/AppHomeNav.vue'
+</script>

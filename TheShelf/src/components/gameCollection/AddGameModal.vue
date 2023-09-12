@@ -10,7 +10,13 @@
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title" id="addGameModalLabel">Confirm Game Addition</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <button
+            type="button"
+            class="close"
+            data-dismiss="modal"
+            aria-label="Close"
+            @click.prevent="$emit('cancelAddGame')"
+          >
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
@@ -43,7 +49,7 @@
 </template>
 
 <script setup lang="ts">
-import { GameIdResponse } from '@/services/boardGamesApi'
+import { type GameIdResponse } from '@/services/boardGamesApi'
 
 const props = defineProps<{
   game: GameIdResponse
@@ -54,12 +60,12 @@ const gameName = () => {
   if (!props.game.name) {
     return ''
   }
-  if (props.game.name.length > 1) {
+  if (Array.isArray(props.game.name)) {
     const name = props.game.name.filter((name) => name['@_type'] == 'primary')
-    return name[0]['@_value']
+    return `${name[0]?.['@_value']}`
   }
   if (props.game.name['@_type'] == 'primary') {
-    return props.game.name['@_value']
+    return `${props.game.name?.['@_value']}`
   }
 }
 </script>

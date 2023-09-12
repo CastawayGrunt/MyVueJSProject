@@ -1,26 +1,30 @@
 <template>
   <div class="d-flex flex-column flex-md-row justify-content-center mb-2">
-    <SearchBar @onSubmit="searchTitle" placeholder="Search game..." />
+    <SearchBar @onSubmit="searchTitle" placeholder="Search for a game..." />
     <RouterLink to="/collection/games" class="btn btn-primary mt-2 mt-md-0">
       View Collection
     </RouterLink>
   </div>
-  <div v-if="loadingStatus === loadingEnum.init" class="d-flex justify-content-center">
+  <div v-if="loadingGamesStatus === loadingGamesEnum.init" class="d-flex justify-content-center">
     <p class="text-center">Use the search bar to find a game</p>
   </div>
-  <div v-else-if="loadingStatus === loadingEnum.noResults" class="d-flex justify-content-center">
-    <p class="text-center">No results found, try again</p>
-  </div>
   <div
-    v-else-if="loadingStatus === loadingEnum.resultsLoading"
-    class="d-flex justify-content-center"
+    v-else-if="loadingGamesStatus === loadingGamesEnum.resultsLoading"
+    class="d-flex justify-content-center align-items-center h-100"
   >
     <div class="spinner-border text-primary" role="status">
       <span class="sr-only">Loading...</span>
     </div>
   </div>
+  <div
+    v-else-if="loadingGamesStatus === loadingGamesEnum.noResults"
+    class="d-flex justify-content-center"
+  >
+    <p class="text-center">No results found, try again</p>
+  </div>
+
   <SearchTable
-    v-else-if="loadingStatus === loadingEnum.resultsLoaded"
+    v-else-if="loadingGamesStatus === loadingGamesEnum.resultsLoaded"
     :games="results"
     @openAddGameModal="openAddGameModal"
   />
@@ -35,60 +39,43 @@ import AddGameModal from '@/components/gameCollection/AddGameModal.vue'
 import {
   getGames,
   getGameDetails,
-  GameSearchResponse,
-  GameIdResponse
+  type GameSearchResponse,
+  type GameIdResponse
 } from '@/services/boardGamesApi'
+import { loadingGamesEnum, loadingGameEnum } from '@/enums/modules/LoadingEnum'
 import { ref } from 'vue'
 
-const loadingEnum = {
-  init: 'init',
-  resultsLoading: 'resultsLoading',
-  resultsLoaded: 'resultsLoaded',
-  noResults: 'noResults'
-}
-
 let results = ref([] as GameSearchResponse[])
-let loadingStatus = ref('init')
+let loadingGamesStatus = ref('init')
+let loadingGameStatus = ref('init')
 let activeGame = ref({} as GameIdResponse)
 
 const searchTitle = async (query: string) => {
   if (query === '') {
-    loadingStatus.value = loadingEnum.init
+    loadingGamesStatus.value = loadingGamesEnum.init
     return (results.value = [])
   }
 
-  loadingStatus.value = loadingEnum.resultsLoading
+  loadingGamesStatus.value = loadingGamesEnum.resultsLoading
 
   const searchResults = await getGames(query)
-  results.value = searchResults
-
-  if (results.value === undefined || results.value.length === 0) {
-    loadingStatus.value = loadingEnum.noResults
+  if (searchResults === undefined || searchResults.length === 0) {
+    loadingGamesStatus.value = loadingGamesEnum.noResults
     return
   }
 
-  // const filteredResults = removeDuplicates(results.value)
-  // console.log('filteredResults', filteredResults)
-  const sortedResults = sortResults(results.value)
-  console.log('sortedResults', sortedResults)
+  const sortedResults = sortResults(searchResults)
+  const filteredResults = removeDuplicates(sortedResults)
 
-  loadingStatus.value = loadingEnum.resultsLoaded
-  return sortedResults
+  loadingGamesStatus.value = loadingGamesEnum.resultsLoaded
+  return (results.value = filteredResults)
 }
 
-// const removeDuplicates = (list: GameSearchResponse[]) => {
-//   const uniqueList = list.filter((thing, index) => {
-//     const _thing = JSON.stringify(thing)
-//     return (
-//       index ===
-//       list.findIndex((obj) => {
-//         return JSON.stringify(obj) === _thing
-//       })
-//     )
-//   })
-//   console.log('uniqueList', uniqueList)
-//   return uniqueList
-// }
+const removeDuplicates = (list: GameSearchResponse[]) => {
+  const uniqueList = [...new Map(list.map((item) => [item['@_id'], item])).values()]
+
+  return uniqueList
+}
 
 const sortResults = (resultsToSort: GameSearchResponse[]) => {
   const list = resultsToSort
@@ -97,14 +84,21 @@ const sortResults = (resultsToSort: GameSearchResponse[]) => {
   })
   return list
 }
+
 const searchGameById = async (query: number) => {
-  if (query.toString() === '') {
+  if (query.toString().trim() === '') {
     return (activeGame.value = {} as GameIdResponse)
   }
+
+  loadingGameStatus.value = loadingGameEnum.resultsLoading
   const searchResults = await getGameDetails(query)
+  if (searchResults === undefined) {
+    return
+  }
   activeGame.value = searchResults
 
-  return activeGame
+  loadingGameStatus.value = loadingGameEnum.resultsLoaded
+  return
 }
 
 const openAddGameModal = async (gameId: number) => {

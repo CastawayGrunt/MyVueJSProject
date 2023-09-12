@@ -9,8 +9,7 @@ export interface GameSearchResponse {
   '@_id': number
   '@_type': string
 }
-
-type gameName = {
+interface gameName {
   '@_sortindex': number
   '@_type': string
   '@_value': string
@@ -41,7 +40,7 @@ export interface GameIdResponse {
   minplaytime: {
     '@_value': number
   }
-  name: [gameName] | gameName
+  name: gameName[] | gameName
   playingtime: {
     '@_value': number
   }
@@ -72,38 +71,22 @@ const parseXMLResults = (data: any) => {
   return result
 }
 
-export const getGames = (query: string) => {
-  const response = new Promise<GameSearchResponse[]>((resolve, reject) =>
-    axios
-      .get(`${baseUrl}/search?query=${query}&type=boardgame,boardgameexpansion`)
-      .then((result) => {
-        if (XMLValidator.validate(result.data)) {
-          const data = parseXMLResults(result.data)
-
-          resolve(data.items.item)
-        }
-      })
-      .catch((error) => {
-        reject(error)
-      })
+export const getGames = async (query: string) => {
+  const result = await axios.get(
+    `${baseUrl}/search?query=${query}&type=boardgame,boardgameexpansion`
   )
-  return response
+  if (XMLValidator.validate(result.data)) {
+    const data = parseXMLResults(result.data)
+
+    return data.items.item as GameSearchResponse[]
+  }
 }
 
-export const getGameDetails = (id: number) => {
-  const response = new Promise<GameIdResponse>((resolve, reject) =>
-    axios
-      .get(`${baseUrl}/thing?id=${id}`)
-      .then((result) => {
-        if (XMLValidator.validate(result.data)) {
-          const data = parseXMLResults(result.data)
+export const getGameDetails = async (id: number) => {
+  const result = await axios.get(`${baseUrl}/thing?id=${id}`)
+  if (XMLValidator.validate(result.data)) {
+    const data = parseXMLResults(result.data)
 
-          resolve(data.items.item)
-        }
-      })
-      .catch((error) => {
-        reject(error)
-      })
-  )
-  return response
+    return data.items.item as GameIdResponse
+  }
 }

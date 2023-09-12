@@ -4,21 +4,11 @@
   </p>
 </template>
 
-<script lang="ts">
-export default {
-  name: 'LabelText',
-  props: {
-    label: {
-      type: String,
-      required: true
-    },
-    text: {
-      type: String,
-      Number,
-      required: true
-    }
-  }
-}
+<script lang="ts" setup>
+defineProps<{
+  label: string
+  text: string | number
+}>()
 </script>
 
 <style scoped></style>

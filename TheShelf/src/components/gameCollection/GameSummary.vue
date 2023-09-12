@@ -14,27 +14,13 @@
   </div>
 </template>
 
-<script lang="ts">
+<script lang="ts" setup>
 import LabelText from '@/components/gameCollection/LabelText.vue'
-import { defineComponent } from 'vue'
-import { GameType } from '@/stores/game'
-import type { PropType } from 'vue'
+import { type GameType } from '@/stores/game'
 
-export default defineComponent({
-  name: 'GameSummary',
-  components: {
-    LabelText
-  },
-  props: {
-    game: {
-      type: Object as PropType<GameType>,
-      required: true
-    }
-  },
-  setup(props) {
-    return { props }
-  }
-})
+defineProps<{
+  game: GameType
+}>()
 </script>
 
 <style scoped></style>

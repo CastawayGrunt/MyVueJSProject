@@ -17,10 +17,6 @@
 
 <script setup lang="ts">
 import { RouterLink } from 'vue-router'
-
-// export default {
-//   name: 'AppHomeNav'
-// }
 </script>
 
 <style scoped></style>

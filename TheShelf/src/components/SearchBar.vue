@@ -23,22 +23,14 @@
   </form>
 </template>
 
-<script lang="ts">
-export default {
-  name: 'SearchBar',
-  data() {
-    return {
-      query: ''
-    }
-  },
-  props: {
-    placeholder: {
-      type: String,
-      required: false,
-      default: 'Search'
-    }
-  }
-}
+<script lang="ts" setup>
+import { ref } from 'vue'
+
+const query = ref('')
+
+defineProps<{
+  placeholder: string
+}>()
 </script>
 
 <style scoped></style>

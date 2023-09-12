@@ -5,7 +5,7 @@
         <tr>
           <th scope="col">Name</th>
           <th scope="col">Year Published</th>
-          <th scope="col">Type</th>
+          <th scope="col" class="d-none d-md-table-cell">Type</th>
           <th scope="col">Action</th>
         </tr>
       </thead>
@@ -13,7 +13,9 @@
         <tr v-for="game in games" :key="game['@_id']">
           <th scope="row" v-html="game.name['@_value']"></th>
           <td>{{ game.yearpublished?.['@_value'] }}</td>
-          <td>{{ game['@_type'] === 'boardgame' ? 'Board&nbsp;Game' : 'Expansion' }}</td>
+          <td class="d-none d-md-table-cell">
+            {{ game['@_type'] === 'boardgame' ? 'Board&nbsp;Game' : 'Expansion' }}
+          </td>
           <td>
             <button
               class="btn btn-primary btn-sm"
@@ -31,13 +33,11 @@
 </template>
 
 <script lang="ts" setup>
-import { GameSearchResponse } from '@/services/boardGamesApi'
+import { type GameSearchResponse } from '@/services/boardGamesApi'
 
-const props = defineProps<{
+defineProps<{
   games: GameSearchResponse[]
 }>()
-
-props
 </script>
 
 <style scoped></style>

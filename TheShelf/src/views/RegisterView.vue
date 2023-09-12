@@ -88,44 +88,31 @@
   </div>
 </template>
 
-<script lang="ts">
-import { RouterLink } from 'vue-router'
+<script lang="ts" setup>
+import { RouterLink, useRouter } from 'vue-router'
+import { ref } from 'vue'
 import { useUserStore } from '@/stores/user'
 
-export default {
-  name: 'RegisterView',
-  data() {
-    return {
-      email: '',
-      password: '',
-      firstName: '',
-      lastName: ''
-    }
-  },
-  components: {
-    RouterLink
-  },
-  methods: {
-    async registerUserClicked() {
-      const user = {
-        id: '',
-        email: this.email,
-        displayName: `${this.firstName} ${this.lastName}`
-      }
-      const credentials = {
-        email: this.email,
-        password: this.password
-      }
-      await this.userStore.register({ ...credentials }, user)
-      this.$router.push({ name: 'dashboard' })
-    }
-  },
-  setup() {
-    const userStore = useUserStore()
-    return {
-      userStore
-    }
+const userStore = useUserStore()
+const $router = useRouter()
+
+const email = ref('')
+const password = ref('')
+const firstName = ref('')
+const lastName = ref('')
+
+const registerUserClicked = async () => {
+  const user = {
+    id: '',
+    email: email.value,
+    displayName: `${firstName.value} ${lastName.value}`
   }
+  const credentials = {
+    email: email.value,
+    password: password.value
+  }
+  await userStore.register({ ...credentials }, user)
+  $router.push({ name: 'dashboard' })
 }
 </script>
 

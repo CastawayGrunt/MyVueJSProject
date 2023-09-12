@@ -70,36 +70,25 @@
   </div>
 </template>
 
-<script lang="ts">
-import { RouterLink } from 'vue-router'
+<script lang="ts" setup>
+import { RouterLink, useRouter } from 'vue-router'
+import { ref } from 'vue'
 import { useUserStore } from '@/stores/user'
 
-export default {
-  name: 'LoginView',
-  data() {
-    return {
-      email: 'brendon.woodall+02@gmail.com',
-      password: '123456'
-    }
-  },
-  components: {
-    RouterLink
-  },
-  methods: {
-    async onLoginClicked() {
-      const credentials = {
-        email: `${this.email}`,
-        password: `${this.password}`
-      }
-      const success = await this.userStore.login(credentials)
-      if (success) {
-        this.$router.push('/dashboard')
-      }
-    }
-  },
-  setup() {
-    const userStore = useUserStore()
-    return { userStore }
+const userStore = useUserStore()
+const $router = useRouter()
+
+const email = ref('brendon.woodall+02@gmail.com')
+const password = ref('123456')
+
+const onLoginClicked = async () => {
+  const credentials = {
+    email: `${email.value}`,
+    password: `${password.value}`
+  }
+  const success = await userStore.login(credentials)
+  if (success) {
+    $router.push('/dashboard')
   }
 }
 </script>

@@ -1,27 +1,20 @@
-<script lang="ts">
+<script lang="ts" setup>
 import AppFrame from '@/components/layout/AppFrame.vue'
 import AppNoFrame from '@/components/layout/AppNoFrame.vue'
-// import router from '@/router'
+import { useRoute } from 'vue-router'
 
-export default {
-  name: 'App',
-  components: {
-    AppFrame,
-    AppNoFrame
-  },
-  computed: {
-    useFrame(): boolean {
-      if (this.$route.meta.frame === undefined || this.$route.meta.frame === false) {
-        return false
-      }
-      return true
-    }
+const $route = useRoute()
+
+const useFrame = (): boolean => {
+  if ($route.meta.frame === undefined || $route.meta.frame === false) {
+    return false
   }
+  return true
 }
 </script>
 
 <template>
-  <AppFrame v-if="useFrame" />
+  <AppFrame v-if="useFrame()" />
   <AppNoFrame v-else />
 </template>
 

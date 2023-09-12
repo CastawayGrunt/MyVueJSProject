@@ -3,38 +3,38 @@
 
   <!-- Content Row -->
   <div class="row">
-    <!-- Earnings (Monthly) Card Example -->
+    <!-- Games Owned Card -->
     <div class="col-xl-3 col-md-6 mb-4">
       <div class="card border-left-primary shadow h-100 py-2">
         <div class="card-body">
           <div class="row no-gutters align-items-center">
             <div class="col mr-2">
               <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                Earnings (Monthly)
+                Games Owned
               </div>
-              <div class="h5 mb-0 font-weight-bold text-gray-800">$40,000</div>
+              <div class="h5 mb-0 font-weight-bold text-gray-800">12</div>
             </div>
             <div class="col-auto">
-              <i class="fas fa-calendar fa-2x text-gray-300"></i>
+              <i class="fas fa-chess-pawn fa-2x text-gray-300"></i>
             </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Earnings (Annual) Card Example -->
+    <!-- Last Played Card Example -->
     <div class="col-xl-3 col-md-6 mb-4">
       <div class="card border-left-success shadow h-100 py-2">
         <div class="card-body">
           <div class="row no-gutters align-items-center">
             <div class="col mr-2">
               <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                Earnings (Annual)
+                Last Played Game
               </div>
-              <div class="h5 mb-0 font-weight-bold text-gray-800">$215,000</div>
+              <div class="h5 mb-0 font-weight-bold text-gray-800">Gloomhaven</div>
             </div>
             <div class="col-auto">
-              <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+              <img src="@/assets/img/undraw_male_avatar.svg" height="50" />
             </div>
           </div>
         </div>
@@ -133,7 +133,7 @@
           <h4 class="small font-weight-bold">
             Customer Database <span class="float-right">60%</span>
           </h4>
-          <div class="progress mb-4 progress-sm">
+          <div class="progress mb-4">
             <div
               class="progress-bar"
               role="progressbar"
@@ -290,15 +290,8 @@
   <!-- End of Main Content -->
 </template>
 
-<script lang="ts">
+<script lang="ts" setup>
 import AppHeader from '@/components/layout/AppHeader.vue'
-
-export default {
-  name: 'DashboardView',
-  components: {
-    AppHeader
-  }
-}
 </script>
 
 <style scoped></style>

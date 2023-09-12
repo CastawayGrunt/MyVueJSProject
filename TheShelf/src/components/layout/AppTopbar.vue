@@ -5,7 +5,6 @@
     <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
       <i class="fa fa-bars"></i>
     </button>
-
     <!-- Topbar Navbar -->
     <ul class="navbar-nav ml-auto">
       <!-- Nav Item - Alerts -->
@@ -158,7 +157,7 @@
           aria-haspopup="true"
           aria-expanded="false"
         >
-          <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{ displayName }}</span>
+          <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{ displayName() }}</span>
           <img class="img-profile rounded-circle" src="img/undraw_profile.svg" />
         </a>
         <!-- Dropdown - User Information -->
@@ -190,38 +189,30 @@
   <!-- End of Topbar -->
 </template>
 
-<script lang="ts">
+<script lang="ts" setup>
 import { useUserStore } from '@/stores/user'
+import { useRouter } from 'vue-router'
 
-export default {
-  name: 'AppTopbar',
-  setup() {
-    const userStore = useUserStore()
-    return {
-      userStore
-    }
-  },
-  computed: {
-    displayName(): string {
-      console.log('user data', this.userStore.user)
+const userStore = useUserStore()
+const $router = useRouter()
 
-      let displayName = ''
-      if (this.userStore.user === null) {
-        return (displayName = 'update name')
-      }
+const displayName = (): string => {
+  console.log('user data', userStore.user)
 
-      if (this.userStore.user) {
-        displayName = this.userStore.user.displayName
-      }
-      return displayName
-    }
-  },
-  methods: {
-    async onLogoutClicked() {
-      await this.userStore.logout()
-      this.$router.push({ name: 'home' })
-    }
+  let displayName = ''
+  if (userStore.user === null) {
+    return (displayName = 'update name')
   }
+
+  if (userStore.user) {
+    displayName = userStore.user.displayName
+  }
+  return displayName
+}
+
+const onLogoutClicked = async () => {
+  await userStore.logout()
+  $router.push({ name: 'home' })
 }
 </script>
 
