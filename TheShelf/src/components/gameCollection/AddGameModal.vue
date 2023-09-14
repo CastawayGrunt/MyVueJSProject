@@ -22,8 +22,10 @@
         </div>
         <div class="modal-body">
           <img class="img-fluid" :src="game.image" alt="game image" />
-          <h1 v-html="gameName()" />
-          <p class="overflow-auto h-25" v-html="game.description" />
+          <h1 v-html="name" />
+          <div class="overflow-auto h-25">
+            <p v-html="game.description" />
+          </div>
         </div>
         <div class="modal-footer">
           <button
@@ -50,24 +52,13 @@
 
 <script setup lang="ts">
 import { type GameIdResponse } from '@/services/boardGamesApi'
+import { findGameName } from '@/helpers/stringHelpers'
 
 const props = defineProps<{
   game: GameIdResponse
 }>()
 
-const gameName = () => {
-  console.log('props.game', props.game)
-  if (!props.game.name) {
-    return ''
-  }
-  if (Array.isArray(props.game.name)) {
-    const name = props.game.name.filter((name) => name['@_type'] == 'primary')
-    return `${name[0]?.['@_value']}`
-  }
-  if (props.game.name['@_type'] == 'primary') {
-    return `${props.game.name?.['@_value']}`
-  }
-}
+const name = findGameName(props.game)
 </script>
 
 <style scoped></style>
