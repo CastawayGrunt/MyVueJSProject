@@ -1,7 +1,6 @@
 import type { GameIdResponse } from '@/services/boardGamesApi'
 
 export const findGameName = (game: GameIdResponse) => {
-  console.log('props.game', game)
   if (!game.name) {
     return ''
   }
