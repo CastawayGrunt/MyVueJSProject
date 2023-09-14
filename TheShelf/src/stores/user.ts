@@ -1,5 +1,11 @@
 import { defineStore } from 'pinia'
-import { loginUser, logoutUser, registerUser, updateUserProfile } from '@/services/fireUserAuth'
+import {
+  loginUser,
+  logoutUser,
+  registerUser,
+  sendPasswordEmail,
+  updateUserProfile
+} from '@/services/fireUserAuth'
 import type { Credentials } from '@/services/fireUserAuth'
 import {
   type FireUser,
@@ -72,6 +78,10 @@ export const useUserStore = defineStore('user', {
           return (this.user = userData)
         }
       }
+    },
+    async requestChangePasswordEmail(email: string) {
+      const changePasswordEmailSent = await sendPasswordEmail(email)
+      return changePasswordEmailSent
     },
     getGames(): GameType[] | null {
       const gameList: GameType[] = []

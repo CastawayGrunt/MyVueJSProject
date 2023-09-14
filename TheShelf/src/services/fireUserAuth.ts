@@ -3,6 +3,7 @@ import {
   createUserWithEmailAndPassword,
   signOut,
   signInWithEmailAndPassword,
+  sendPasswordResetEmail,
   updateProfile
 } from 'firebase/auth'
 import { type FireUser } from './fireUserData'
@@ -46,5 +47,14 @@ export const updateUserProfile = async (user: FireRegisterUserInfo) => {
     displayName: user.displayName,
     photoURL: '/assets/img/undraw_male_avatar.svg'
   })
+  return true
+}
+
+export const sendPasswordEmail = async (email: string) => {
+  const auth = getAuth()
+  if (!auth.currentUser) {
+    return false
+  }
+  await sendPasswordResetEmail(auth, email)
   return true
 }
