@@ -3,19 +3,20 @@ import { XMLParser, XMLValidator } from 'fast-xml-parser'
 
 const baseUrl = 'https://boardgamegeek.com/xmlapi2'
 
-export interface GameSearchResponse {
+export type GameSearchResponse = {
   name: { '@_type': string; '@_value': string }
   yearpublished: { '@_value': number }
   '@_id': number
   '@_type': string
 }
-interface gameName {
+
+type GameName = {
   '@_sortindex': number
   '@_type': string
   '@_value': string
 }
 
-export interface GameIdResponse {
+export type GameIdResponse = {
   '@_id': number
   '@_type': string
   description: string
@@ -40,7 +41,7 @@ export interface GameIdResponse {
   minplaytime: {
     '@_value': number
   }
-  name: gameName[] | gameName
+  name: GameName[] | GameName
   playingtime: {
     '@_value': number
   }

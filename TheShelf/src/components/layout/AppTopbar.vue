@@ -157,7 +157,7 @@
           aria-haspopup="true"
           aria-expanded="false"
         >
-          <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{ displayName() }}</span>
+          <span class="mr-2 d-none d-md-inline text-gray-600 small">{{ displayName }}</span>
           <img class="img-profile rounded-circle" src="img/undraw_profile.svg" />
         </a>
         <!-- Dropdown - User Information -->
@@ -165,6 +165,7 @@
           class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
           aria-labelledby="userDropdown"
         >
+          <span class="ml-4 d-inline d-md-none text-gray-600 small">{{ displayName }}</span>
           <RouterLink to="/profile" class="dropdown-item">
             <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
             Profile
@@ -192,23 +193,21 @@
 <script lang="ts" setup>
 import { useUserStore } from '@/stores/user'
 import { useRouter } from 'vue-router'
+import { onMounted, ref } from 'vue'
 
 const userStore = useUserStore()
 const $router = useRouter()
+const displayName = ref('')
 
-const displayName = (): string => {
-  console.log('user data', userStore.user)
-
-  let displayName = ''
+onMounted(() => {
   if (userStore.user === null) {
-    return (displayName = 'update name')
+    return (displayName.value = 'update name')
   }
 
   if (userStore.user) {
-    displayName = userStore.user.displayName
+    displayName.value = userStore.user.displayName
   }
-  return displayName
-}
+})
 
 const onLogoutClicked = async () => {
   await userStore.logout()

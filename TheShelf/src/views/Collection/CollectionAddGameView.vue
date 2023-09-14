@@ -44,6 +44,8 @@ import {
 } from '@/services/boardGamesApi'
 import { loadingGamesEnum, loadingGameEnum } from '@/enums/modules/LoadingEnum'
 import { ref } from 'vue'
+import { useUserStore } from '@/stores/user'
+// import type { GameCollection } from '@/services/fireUserData'
 
 let results = ref([] as GameSearchResponse[])
 let loadingGamesStatus = ref('init')
@@ -72,6 +74,7 @@ const searchTitle = async (query: string) => {
 }
 
 const removeDuplicates = (list: GameSearchResponse[]) => {
+  // https://www.javascripttutorial.net/array/javascript-remove-duplicates-from-array/
   const uniqueList = [...new Map(list.map((item) => [item['@_id'], item])).values()]
 
   return uniqueList
@@ -112,7 +115,10 @@ const cancelAdd = () => {
 
 const addGame = async (game: GameIdResponse) => {
   console.log('game', game)
-  // await $store.dispatch('addGame', game)
+  const userStore = useUserStore()
+
+  await userStore.addGame(game)
+
   activeGame.value = {} as GameIdResponse
 }
 </script>

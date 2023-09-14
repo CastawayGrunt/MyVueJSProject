@@ -62,6 +62,7 @@
                       class="form-control form-control-user"
                       id="exampleRepeatPassword"
                       placeholder="Repeat Password"
+                      v-model="passwordCheck"
                     />
                   </div>
                 </div>
@@ -98,10 +99,22 @@ const $router = useRouter()
 
 const email = ref('')
 const password = ref('')
+const passwordCheck = ref('')
 const firstName = ref('')
 const lastName = ref('')
 
 const registerUserClicked = async () => {
+  if (
+    email.value === '' ||
+    password.value === '' ||
+    firstName.value === '' ||
+    lastName.value === ''
+  ) {
+    return
+  }
+  if (password.value !== passwordCheck.value) {
+    return
+  }
   const user = {
     id: '',
     email: email.value,

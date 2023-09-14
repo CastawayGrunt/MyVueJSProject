@@ -5,19 +5,16 @@ import {
   signInWithEmailAndPassword,
   updateProfile
 } from 'firebase/auth'
+import { type FireUser } from './fireUserData'
 
-export interface credentials {
+export type Credentials = {
   email: string
   password: string
 }
 
-export interface userInfo {
-  id: string
-  displayName: string
-  email: string
-}
+type FireRegisterUserInfo = Omit<FireUser, 'games,lastPlayed,mostPlayed'>
 
-export const registerUser = async ({ email, password }: credentials) => {
+export const registerUser = async ({ email, password }: Credentials) => {
   const auth = getAuth()
   const cred = await createUserWithEmailAndPassword(auth, email, password)
 
@@ -28,7 +25,7 @@ export const registerUser = async ({ email, password }: credentials) => {
   }
 }
 
-export const loginUser = async ({ email, password }: credentials) => {
+export const loginUser = async ({ email, password }: Credentials) => {
   const auth = getAuth()
   const cred = await signInWithEmailAndPassword(auth, email, password)
 
@@ -40,7 +37,7 @@ export const logoutUser = async () => {
   await signOut(auth)
 }
 
-export const updateUserProfile = async (user: userInfo) => {
+export const updateUserProfile = async (user: FireRegisterUserInfo) => {
   const auth = getAuth()
   if (!auth.currentUser) {
     return false

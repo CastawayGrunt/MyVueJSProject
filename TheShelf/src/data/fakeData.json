@@ -1,7 +1,8 @@
 {
     "fakeGames": [
       {
-        "id": 1,
+        "id": "1",
+        "gameId": 121,
         "name": "Catan",
         "description": "A game about settling a new island",
         "minPlayers": 3,
@@ -10,11 +11,19 @@
         "maxPlaytime": 120,
         "minAge": 10,
         "yearPublished": 1995,
+        "rating":{
+          "1star": 0,
+          "2star": 2,
+          "3star": 3,
+          "4star": 4,
+          "5star": 5
+        },
         "image":"https://cf.geekdo-images.com/W3Bsga_uLP9kO91gZ7H8yw__original/img/xV7oisd3RQ8R-k18cdWAYthHXsA=/0x0/filters:format(jpeg)/pic2419375.jpg",
         "url": "https://boardgamegeek.com/boardgame/13/catan"
       },
       {
-        "id": 2,
+        "id": "2",
+        "gameId": 122,
         "name": "Pandemic",
         "description": "A game about saving the world from a pandemic",
         "minPlayers": 2,
@@ -23,12 +32,20 @@
         "maxPlaytime": 60,
         "minAge": 8,
         "yearPublished": 2008,
+        "rating":{
+          "1star": 0,
+          "2star": 0,
+          "3star": 3,
+          "4star": 4,
+          "5star": 5
+        },
         "image":
           "https://cf.geekdo-images.com/S3ybV1LAp-8SnHIXLLjVqA__original/img/IsrvRLpUV1TEyZsO5rC-btXaPz0=/0x0/filters:format(jpeg)/pic1534148.jpg",
         "url": "https://boardgamegeek.com/boardgame/30549/pandemic"
       },
       {
-        "id": 3,
+        "id": "3",
+        "gameId": 123,
         "name": "Ticket to Ride",
         "description": "A game about building train routes",
         "minPlayers": 2,
@@ -37,6 +54,13 @@
         "maxPlaytime": 60,
         "minAge": 8,
         "yearPublished": 2004,
+        "rating":{
+          "1star": 1,
+          "2star": 2,
+          "3star": 3,
+          "4star": 4,
+          "5star": 3
+        },
         "image":
           "https://cf.geekdo-images.com/ZWJg0dCdrWHxVnc0eFXK8w__original/img/LgzEsQlF3xkSEQLoorc8ntiYiIY=/0x0/filters:format(jpeg)/pic38668.jpg",
         "url": "https://boardgamegeek.com/boardgame/9209/ticket-ride"

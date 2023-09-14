@@ -78,7 +78,7 @@ import { useUserStore } from '@/stores/user'
 const userStore = useUserStore()
 const $router = useRouter()
 
-const email = ref('brendon.woodall+02@gmail.com')
+const email = ref('brendon.woodall@gmail.com')
 const password = ref('123456')
 
 const onLoginClicked = async () => {
