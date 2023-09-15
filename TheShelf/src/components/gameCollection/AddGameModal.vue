@@ -1,5 +1,6 @@
 <template>
   <div
+    v-if="game"
     class="modal fade"
     id="addGameModal"
     tabindex="-1"
@@ -21,16 +22,30 @@
           </button>
         </div>
         <div class="modal-body">
-          <img class="img-fluid" :src="game.image" alt="game image" />
-          <h1 v-html="name" />
-          <div class="overflow-auto h-25">
+          <div class="d-flex justify-content-center py-3">
+            <img :src="game.image" alt="game image" height="300" />
+          </div>
+          <h1 v-html="name" class="font-weight-bold text-primary" />
+          <div class="overflow-auto" style="max-height: 100px">
             <p v-html="game.description" />
+          </div>
+          <div class="row row-cols-2 ml-2">
+            <LabelText
+              label="Players"
+              :text="`${game.minplayers?.['@_value']} - ${game.maxplayers?.['@_value']}`"
+            />
+            <LabelText
+              label="Play Time"
+              :text="`${game.minplaytime?.['@_value']} - ${game.maxplaytime?.['@_value']} min`"
+            />
+            <LabelText label="Age" :text="`${game.minage?.['@_value']}+`" />
+            <LabelText label="Year Published" :text="`${game.yearpublished?.['@_value']}`" />
           </div>
         </div>
         <div class="modal-footer">
           <button
             type="button"
-            class="btn btn-secondary"
+            class="btn btn-outline-secondary"
             data-dismiss="modal"
             @click.prevent="$emit('cancelAddGame')"
           >
@@ -53,12 +68,19 @@
 <script setup lang="ts">
 import { type GameIdResponse } from '@/services/boardGamesApi'
 import { findGameName } from '@/helpers/stringHelpers'
+import LabelText from '@/components/gameCollection/LabelText.vue'
+import { onUpdated, ref } from 'vue'
+
+const name = ref('')
 
 const props = defineProps<{
   game: GameIdResponse
 }>()
 
-const name = findGameName(props.game)
+onUpdated(() => {
+  const foundName = findGameName(props.game)
+  return (name.value = foundName)
+})
 </script>
 
 <style scoped></style>
