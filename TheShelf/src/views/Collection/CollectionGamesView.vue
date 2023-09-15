@@ -1,9 +1,7 @@
 <template>
   <div class="d-flex flex-column flex-md-row justify-content-end mb-2">
     <SearchBar @onSubmit="filterGames" placeholder="Search Collection" />
-    <RouterLink to="/collection/add" class="btn btn-primary mt-2 mt-md-0">
-      Add New Game
-    </RouterLink>
+    <CollectionNavGroup />
   </div>
   <div>
     <p v-if="loadingGamesStatus === loadingGamesEnum.init" class="d-flex justify-content-center">
@@ -17,7 +15,10 @@
         <span class="sr-only">Loading...</span>
       </div>
     </div>
-    <div class="row" v-else-if="loadingGamesStatus === loadingGamesEnum.resultsLoaded">
+    <div
+      class="row row-cols-1 row-cols-lg-2"
+      v-else-if="loadingGamesStatus === loadingGamesEnum.resultsLoaded"
+    >
       <GameSummary v-for="game in searchResults" :key="game.bggId" :game="game" />
     </div>
     <p v-else class="d-flex justify-content-center">No results found</p>
@@ -27,6 +28,7 @@
 <script lang="ts" setup>
 import SearchBar from '@/components/SearchBar.vue'
 import GameSummary from '@/components/gameCollection/GameSummary.vue'
+import CollectionNavGroup from '@/components/gameCollection/CollectionNavGroup.vue'
 import { loadingGamesEnum } from '@/enums/modules/LoadingEnum'
 
 import { ref, onMounted } from 'vue'

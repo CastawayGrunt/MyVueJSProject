@@ -58,8 +58,8 @@ const router = createRouter({
       },
       children: [
         {
-          path: 'add',
-          name: 'add',
+          path: 'add-game',
+          name: 'addGame',
           component: () => import('@/views/Collection/CollectionAddGameView.vue'),
           meta: {
             auth: true,
@@ -67,8 +67,8 @@ const router = createRouter({
           }
         },
         {
-          path: 'edit/:id',
-          name: 'edit',
+          path: 'edit-game/:id',
+          name: 'editGame',
           component: () => import('@/views/Collection/CollectionEditGameView.vue'),
           meta: {
             auth: true,

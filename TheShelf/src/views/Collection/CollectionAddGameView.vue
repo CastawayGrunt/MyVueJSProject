@@ -1,9 +1,7 @@
 <template>
   <div class="d-flex flex-column flex-md-row justify-content-center mb-2">
     <SearchBar @onSubmit="searchTitle" placeholder="Search for a game..." />
-    <RouterLink to="/collection/games" class="btn btn-primary mt-2 mt-md-0">
-      View Collection
-    </RouterLink>
+    <CollectionNavGroup />
   </div>
   <div v-if="loadingGamesStatus === loadingGamesEnum.init" class="d-flex justify-content-center">
     <p class="text-center">Use the search bar to find a game</p>
@@ -28,11 +26,16 @@
     :games="results"
     @openAddGameModal="openAddGameModal"
   />
-  <AddGameModal :game="activeGame" @cancelAddGame="cancelAdd" @addGame="addGame" />
+  <AddGameModal
+    v-if="activeGame"
+    :game="activeGame"
+    @cancelAddGame="cancelAdd"
+    @addGame="addGame"
+  />
 </template>
 
 <script lang="ts" setup>
-import { RouterLink } from 'vue-router'
+import CollectionNavGroup from '@/components/gameCollection/CollectionNavGroup.vue'
 import SearchBar from '@/components/SearchBar.vue'
 import SearchTable from '@/components/gameCollection/SearchTable.vue'
 import AddGameModal from '@/components/gameCollection/AddGameModal.vue'
