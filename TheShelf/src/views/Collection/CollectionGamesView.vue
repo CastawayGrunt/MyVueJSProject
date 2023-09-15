@@ -6,7 +6,18 @@
     </RouterLink>
   </div>
   <div>
-    <div class="row" v-if="listPopulated">
+    <p v-if="loadingGamesStatus === loadingGamesEnum.init" class="d-flex justify-content-center">
+      Start your collection by clicking Add New Game
+    </p>
+    <div
+      v-else-if="loadingGamesStatus === loadingGamesEnum.resultsLoading"
+      class="d-flex justify-content-center align-items-center h-100"
+    >
+      <div class="spinner-border text-primary" role="status">
+        <span class="sr-only">Loading...</span>
+      </div>
+    </div>
+    <div class="row" v-else-if="loadingGamesStatus === loadingGamesEnum.resultsLoaded">
       <GameSummary v-for="game in searchResults" :key="game.bggId" :game="game" />
     </div>
     <p v-else class="d-flex justify-content-center">No results found</p>
@@ -16,41 +27,53 @@
 <script lang="ts" setup>
 import SearchBar from '@/components/SearchBar.vue'
 import GameSummary from '@/components/gameCollection/GameSummary.vue'
+import { loadingGamesEnum } from '@/enums/modules/LoadingEnum'
 
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { type GameType } from '@/services/fireGameData'
 import { useUserStore } from '@/stores/user'
 
-const searchResults = ref([{} as GameType])
-const collection = ref([{} as GameType])
-const listPopulated = ref(false)
+const searchResults = ref([] as GameType[])
+const collection = ref([] as GameType[])
+const loadingGamesStatus = ref('init')
 
 const filterGames = (query: string) => {
-  console.log('filtering?', query)
-  const filteredGames = collection.value.filter((game) => {
+  const filteredGames = collection.value?.filter((game) => {
     return game.name.toLowerCase().includes(query.toLowerCase())
   })
-  console.log('filtersearchResults', searchResults.value)
-  if (filteredGames.length === 0) {
-    listPopulated.value = false
+
+  if (filteredGames === undefined || filteredGames.length === 0) {
+    loadingGamesStatus.value = loadingGamesEnum.noResults
   } else {
-    listPopulated.value = true
+    loadingGamesStatus.value = loadingGamesEnum.resultsLoaded
   }
   return (searchResults.value = filteredGames)
 }
 
-const loadCollection = useUserStore().getGames()
-console.log('loadCollection', loadCollection)
-if (loadCollection === null) {
-  searchResults.value = []
-} else {
-  collection.value = loadCollection
-  searchResults.value = loadCollection
-  console.log('mountcollection', collection.value)
-  console.log('mountsearchResults', searchResults.value)
-  listPopulated.value = true
-  console.log('listPopulated', listPopulated.value)
+const loadCollection = async () => {
+  loadingGamesStatus.value = loadingGamesEnum.resultsLoading
+  const games = useUserStore().games
+
+  if (!games) {
+    const games = await useUserStore().getGames()
+    if (games) {
+      collection.value = games
+      return (loadingGamesStatus.value = loadingGamesEnum.resultsLoaded)
+    }
+  }
+
+  if (games) {
+    collection.value = games
+    return (loadingGamesStatus.value = loadingGamesEnum.resultsLoaded)
+  } else {
+    return (loadingGamesStatus.value = loadingGamesEnum.noResults)
+  }
 }
+
+onMounted(async () => {
+  await loadCollection()
+  searchResults.value = collection.value
+})
 </script>
 
 <style scoped></style>

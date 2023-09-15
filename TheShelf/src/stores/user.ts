@@ -83,33 +83,38 @@ export const useUserStore = defineStore('user', {
       const changePasswordEmailSent = await sendPasswordEmail(email)
       return changePasswordEmailSent
     },
-    getGames(): GameType[] | null {
-      const gameList: GameType[] = []
-      this.user?.games.forEach(async (query) => {
-        const game = await getFireGame(query.gameId)
-        const gameData = {
-          bggId: game.bggId,
-          name: game.name,
-          description: game.description,
-          minPlayers: game.minPlayers,
-          maxPlayers: game.maxPlayers,
-          minPlaytime: game.minPlaytime,
-          maxPlaytime: game.maxPlaytime,
-          minAge: game.minAge,
-          yearPublished: game.yearPublished,
-          rating: {
-            '1star': game.rating['1star'],
-            '2star': game.rating['2star'],
-            '3star': game.rating['3star'],
-            '4star': game.rating['4star'],
-            '5star': game.rating['5star']
-          },
-          image: game.image
+    async getGames() {
+      if (this.user) {
+        const tempGames = []
+        for (const game of this.user.games) {
+          const gameData = await this.getGame(game.gameId)
+          tempGames.push(gameData)
         }
-        gameList.push(gameData)
-      })
-      console.log('gameList', gameList)
-      return (this.games = gameList)
+        return (this.games = tempGames), tempGames
+      }
+    },
+    async getGame(gameId: string) {
+      const result = await getFireGame(gameId)
+      const gameData = {
+        bggId: result.bggId,
+        name: result.name,
+        description: result.description,
+        minPlayers: result.minPlayers,
+        maxPlayers: result.maxPlayers,
+        minPlaytime: result.minPlaytime,
+        maxPlaytime: result.maxPlaytime,
+        minAge: result.minAge,
+        yearPublished: result.yearPublished,
+        rating: {
+          '1star': result.rating['1star'],
+          '2star': result.rating['2star'],
+          '3star': result.rating['3star'],
+          '4star': result.rating['4star'],
+          '5star': result.rating['5star']
+        },
+        image: result.image
+      }
+      return gameData
     },
     async addGame(game: GameIdResponse) {
       if (this.user) {
@@ -124,10 +129,11 @@ export const useUserStore = defineStore('user', {
         }
 
         await addFireUserGame(this.user, mappedGame)
+        const gameData = await this.getGame(newGame.bggId)
 
-        return (this.user = {
-          ...this.user
-        })
+        this.games?.push(gameData)
+        this.user.games.push(mappedGame)
+        return
       }
     }
   }
