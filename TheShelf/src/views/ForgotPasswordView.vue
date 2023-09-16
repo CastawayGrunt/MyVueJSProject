@@ -9,7 +9,7 @@
             <div class="row">
               <div class="col-lg-6 d-none d-lg-block my-auto">
                 <img
-                  src="@/assets/img/undraw_secure_login_pdn4.svg"
+                  src="@/assets/img/undraw_forgot_password.svg"
                   class="img-fluid px-3 px-sm-4 mt-3 mb-4"
                   alt="login"
                 />
@@ -17,7 +17,11 @@
               <div class="col-lg-6">
                 <div class="p-5">
                   <div class="text-center">
-                    <h1 class="h4 text-gray-900 mb-4">Welcome Back!</h1>
+                    <h1 class="h4 text-gray-900 mb-2">Forgot Your Password?</h1>
+                    <p class="mb-4">
+                      We get it, stuff happens. Just enter your email address below and we'll send
+                      you a link to reset your password!
+                    </p>
                   </div>
                   <form class="user">
                     <div class="form-group">
@@ -30,29 +34,21 @@
                         v-model="email"
                       />
                     </div>
-                    <div class="form-group">
-                      <input
-                        type="password"
-                        class="form-control form-control-user"
-                        id="exampleInputPassword"
-                        placeholder="Password"
-                        v-model="password"
-                      />
-                    </div>
                     <button
+                      @click.prevent="onPasswordResetClicked"
                       class="btn btn-primary btn-user btn-block"
-                      type="submit"
-                      @click.prevent="onLoginClicked()"
                     >
-                      Login
+                      Reset Password
                     </button>
                   </form>
                   <hr />
                   <div class="text-center">
-                    <RouterLink to="/forgotpassword" class="small">Forgot Password?</RouterLink>
+                    <RouterLink to="/register" class="small">Create an Account!</RouterLink>
                   </div>
                   <div class="text-center">
-                    <RouterLink to="/register" class="small">Create an Account!</RouterLink>
+                    <RouterLink to="/login" class="small"
+                      >Already have an account? Login!</RouterLink
+                    >
                   </div>
                 </div>
               </div>
@@ -72,17 +68,18 @@ import { useUserStore } from '@/stores/user'
 const userStore = useUserStore()
 const $router = useRouter()
 
-const email = ref('brendon.woodall@gmail.com')
-const password = ref('123456')
+const email = ref('')
 
-const onLoginClicked = async () => {
-  const credentials = {
-    email: `${email.value}`,
-    password: `${password.value}`
+const onPasswordResetClicked = async () => {
+  if (!email.value) {
+    return alert('Please enter your email address')
   }
-  const success = await userStore.login(credentials)
+  console.log('onPasswordResetClicked')
+  const success = await userStore.requestChangePasswordEmail(email.value)
+  console.log('onPasswordResetClicked1')
   if (success) {
-    $router.push('/dashboard')
+    console.log('onPasswordResetClicked2')
+    $router.push('/login')
   }
 }
 </script>
