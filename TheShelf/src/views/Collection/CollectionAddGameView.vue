@@ -117,7 +117,6 @@ const cancelAdd = () => {
 }
 
 const addGame = async (game: GameIdResponse) => {
-  console.log('game', game)
   const userStore = useUserStore()
 
   await userStore.addGame(game)

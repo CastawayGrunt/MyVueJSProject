@@ -22,11 +22,14 @@
           </button>
         </div>
         <div class="modal-body">
-          <div class="d-flex justify-content-center py-3">
+          <div v-if="game.image" class="d-flex justify-content-center py-3">
             <img :src="game.image" alt="game image" height="300" />
           </div>
           <h1 v-html="name" class="font-weight-bold text-primary" />
-          <div class="overflow-auto" style="max-height: 100px">
+          <div
+            class="overflow-auto border border-primary p-2 mb-3 rounded"
+            style="max-height: 100px"
+          >
             <p v-html="game.description" />
           </div>
           <div class="row row-cols-2 ml-2">
