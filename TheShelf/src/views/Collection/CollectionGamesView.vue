@@ -19,7 +19,12 @@
       class="row row-cols-1 row-cols-lg-2"
       v-else-if="loadingGamesStatus === loadingGamesEnum.resultsLoaded"
     >
-      <GameSummary v-for="game in searchResults" :key="game.bggId" :game="game" />
+      <GameSummary
+        v-for="game in searchResults"
+        :key="game.bggId"
+        :game="game"
+        @onDeleteGame="removeGame(game)"
+      />
     </div>
     <p v-else class="d-flex justify-content-center">No results found</p>
   </div>
@@ -70,6 +75,12 @@ const loadCollection = async () => {
   } else {
     return (loadingGamesStatus.value = loadingGamesEnum.noResults)
   }
+}
+
+const removeGame = async (game: GameType) => {
+  await useUserStore().deleteUserGame(game)
+  await loadCollection()
+  searchResults.value = collection.value
 }
 
 onMounted(async () => {

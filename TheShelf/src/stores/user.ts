@@ -12,7 +12,8 @@ import {
   addFireUser,
   getFireUser,
   addFireUserGame,
-  type GameCollection
+  type GameCollection,
+  deleteFireUserGame
 } from '@/services/fireUserData'
 import type { GameIdResponse } from '@/services/boardGamesApi'
 import { addFireGame, getFireGame, type GameType } from '@/services/fireGameData'
@@ -66,10 +67,10 @@ export const useUserStore = defineStore('user', {
           id: registeredUser.uid,
           displayName: user.displayName,
           email: user.email,
-          games: [],
-          dateCreated: new Date().toISOString(),
-          lastPlayed: '',
-          mostPlayed: ''
+          games: user.games,
+          dateCreated: user.dateCreated,
+          lastPlayed: user.lastPlayed,
+          mostPlayed: user.mostPlayed
         }
         console.log(userData)
         await addFireUser(userData)
@@ -134,6 +135,23 @@ export const useUserStore = defineStore('user', {
         this.games?.push(gameData)
         this.user.games.push(mappedGame)
         return
+      }
+    },
+    async deleteUserGame(game: GameType) {
+      if (this.user) {
+        const gameIndex = this.user.games.findIndex((g) => g.gameId === game.bggId)
+        const GametoRemove = this.user.games[gameIndex]
+
+        if (gameIndex === -1) {
+          throw new Error('Game does not exist')
+        }
+        if (gameIndex > -1) {
+          const success = await deleteFireUserGame(this.user, GametoRemove)
+          this.user.games.splice(gameIndex, 1)
+          this.games?.splice(gameIndex, 1)
+
+          return success
+        }
       }
     }
   }

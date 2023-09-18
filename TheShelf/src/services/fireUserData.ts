@@ -1,5 +1,13 @@
 import { useFirestore } from 'vuefire'
-import { arrayUnion, doc, getDoc, setDoc, updateDoc, deleteDoc } from 'firebase/firestore'
+import {
+  arrayUnion,
+  doc,
+  getDoc,
+  setDoc,
+  updateDoc,
+  deleteDoc,
+  arrayRemove
+} from 'firebase/firestore'
 
 export type FireUser = {
   id: string
@@ -72,6 +80,20 @@ export async function addFireUserGame(user: FireUser, game: GameCollection) {
 
   await updateDoc(userRef, {
     games: arrayUnion(game)
+  })
+}
+
+export async function deleteFireUserGame(user: FireUser, game: GameCollection) {
+  const db = useFirestore()
+  const userRef = doc(db, 'users', user.id)
+  const userSnap = await getDoc(userRef)
+
+  if (!userSnap.exists()) {
+    throw new Error('User do not exist')
+  }
+
+  await updateDoc(userRef, {
+    games: arrayRemove(game)
   })
 }
 
