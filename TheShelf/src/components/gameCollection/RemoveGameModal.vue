@@ -59,7 +59,6 @@ const props = defineProps<{
 }>()
 
 onMounted(() => {
-  console.log(props.game)
   return (name.value = props.game.name ? props.game.name : '')
 })
 </script>

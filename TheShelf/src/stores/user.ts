@@ -72,7 +72,6 @@ export const useUserStore = defineStore('user', {
           lastPlayed: user.lastPlayed,
           mostPlayed: user.mostPlayed
         }
-        console.log(userData)
         await addFireUser(userData)
 
         if (registeredUser.displayName != null && registeredUser.email != null) {

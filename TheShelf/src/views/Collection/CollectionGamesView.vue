@@ -136,7 +136,6 @@ const removeGame = async (game: GameType) => {
 }
 
 onMounted(async () => {
-  console.log('mounted')
   await loadCollection()
   searchResults.value = collection.value
   sortName()

@@ -74,11 +74,10 @@ const onPasswordResetClicked = async () => {
   if (!email.value) {
     return alert('Please enter your email address')
   }
-  console.log('onPasswordResetClicked')
+
   const success = await userStore.requestChangePasswordEmail(email.value)
-  console.log('onPasswordResetClicked1')
+
   if (success) {
-    console.log('onPasswordResetClicked2')
     $router.push('/login')
   }
 }
