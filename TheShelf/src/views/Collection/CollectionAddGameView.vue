@@ -26,7 +26,16 @@
     :games="results"
     @openAddGameModal="openAddGameModal"
   />
-  <AppPagination :pageCount="19" :current-page="1" :first-page="true" :last-page="false" />
+  <AppPagination
+    v-if="loadingGamesStatus === loadingGamesEnum.resultsLoaded"
+    :pageCount="pages"
+    :current-page="currentPage"
+    :first-page="firstPage"
+    :last-page="lastPage"
+    @onNextClicked="onNext"
+    @onPrevClicked="onPrev"
+    @onPageClicked="onPage"
+  />
   <AddGameModal
     v-if="activeGame"
     :game="activeGame"
@@ -42,7 +51,6 @@ import SearchTable from '@/components/gameCollection/SearchTable.vue'
 import AppPagination from '@/components/gameCollection/AppPagination.vue'
 import AddGameModal from '@/components/gameCollection/AddGameModal.vue'
 import {
-  getGames,
   getGameDetails,
   type GameSearchResponse,
   type GameIdResponse
@@ -50,13 +58,19 @@ import {
 import { loadingGamesEnum, loadingGameEnum } from '@/enums/modules/LoadingEnum'
 import { ref } from 'vue'
 import { useUserStore } from '@/stores/user'
+import { useGameSearchStore } from '@/stores/gameSearch'
 
-let results = ref([] as GameSearchResponse[])
-let loadingGamesStatus = ref('init')
-let loadingGameStatus = ref('init')
-let activeGame = ref({} as GameIdResponse)
+const results = ref([] as GameSearchResponse[])
+const loadingGamesStatus = ref('init')
+const loadingGameStatus = ref('init')
+const activeGame = ref({} as GameIdResponse)
+const pages = ref(0)
+const currentPage = ref(1)
+const firstPage = ref(true)
+const lastPage = ref(false)
 
 const searchTitle = async (query: string) => {
+  const gameSearchStore = useGameSearchStore()
   if (query === '') {
     loadingGamesStatus.value = loadingGamesEnum.init
     return (results.value = [])
@@ -64,32 +78,62 @@ const searchTitle = async (query: string) => {
 
   loadingGamesStatus.value = loadingGamesEnum.resultsLoading
 
-  const searchResults = await getGames(query)
+  await gameSearchStore.getSearchGames(query)
+
+  const searchResults = updatePage()
   if (searchResults === undefined || searchResults.length === 0) {
     loadingGamesStatus.value = loadingGamesEnum.noResults
     return
   }
 
-  const sortedResults = sortResults(searchResults)
-  const filteredResults = removeDuplicates(sortedResults)
+  pages.value = gameSearchStore.pageCount
 
   loadingGamesStatus.value = loadingGamesEnum.resultsLoaded
-  return (results.value = filteredResults)
+  return (results.value = searchResults)
 }
 
-const removeDuplicates = (list: GameSearchResponse[]) => {
-  // https://www.javascripttutorial.net/array/javascript-remove-duplicates-from-array/
-  const uniqueList = [...new Map(list.map((item) => [item['@_id'], item])).values()]
-
-  return uniqueList
+const onNext = () => {
+  currentPage.value++
+  if (currentPage.value === pages.value) {
+    lastPage.value = true
+  }
+  if (currentPage.value > 1) {
+    firstPage.value = false
+  }
+  updatePage()
 }
 
-const sortResults = (resultsToSort: GameSearchResponse[]) => {
-  const list = resultsToSort
-  list.sort((a, b) => {
-    return a.yearpublished?.['@_value'] - b.yearpublished?.['@_value']
-  })
-  return list
+const onPrev = () => {
+  currentPage.value--
+  if (currentPage.value === 1) {
+    firstPage.value = true
+  }
+  if (currentPage.value < pages.value) {
+    lastPage.value = false
+  }
+  updatePage()
+}
+
+const onPage = (page: number) => {
+  currentPage.value = page
+  if (currentPage.value === pages.value) {
+    lastPage.value = true
+  }
+  if (currentPage.value === 1) {
+    firstPage.value = true
+  }
+  updatePage()
+}
+
+const updatePage = () => {
+  firstPage.value = currentPage.value == 1
+  lastPage.value = currentPage.value == pages.value
+
+  const searchResults = useGameSearchStore().getPage(currentPage.value)
+  if (searchResults === undefined || searchResults.page.length === 0) {
+    return
+  }
+  return (results.value = searchResults.page)
 }
 
 const searchGameById = async (query: number) => {

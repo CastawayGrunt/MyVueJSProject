@@ -7,10 +7,10 @@
     </li>
     <li v-for="n in pages" :key="n" class="page-item" :class="{ active: n == currentPage }">
       <a v-if="n.toString() == '...'" class="page-link">{{ n }}</a>
-      <a v-else class="page-link" href="#" @click.prevent="$emit('onPageClicked(n)')">{{ n }}</a>
+      <a v-else class="page-link" href="#" @click.prevent="$emit('onPageClicked', n)">{{ n }}</a>
     </li>
     <li class="page-item" :class="{ disabled: lastPage }">
-      <a class="page-link" href="#" @click.prevent="$emit('onNextClicked()')">Next</a>
+      <a class="page-link" href="#" @click.prevent="$emit('onNextClicked')">Next</a>
     </li>
   </ul>
 </template>

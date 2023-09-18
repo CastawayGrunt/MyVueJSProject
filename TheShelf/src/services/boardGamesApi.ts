@@ -72,7 +72,7 @@ const parseXMLResults = (data: any) => {
   return result
 }
 
-export const getGames = async (query: string) => {
+export const getAPIGames = async (query: string) => {
   const result = await axios.get(
     `${baseUrl}/search?query=${query}&type=boardgame,boardgameexpansion`
   )
