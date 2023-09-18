@@ -47,8 +47,7 @@ const pages = computed(() => {
     { length: paginationLength.value },
     (_, index) => props.pageCount - index
   ).reverse()
-  const dots = ['...']
-  return front.concat(dots).concat(back)
+  return front.concat(['...']).concat(back)
 })
 </script>
 
