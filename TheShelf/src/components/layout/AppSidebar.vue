@@ -1,6 +1,9 @@
 <template>
   <!-- Sidebar -->
-  <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+  <ul
+    class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion toggled"
+    id="accordionSidebar"
+  >
     <!-- Sidebar - Brand -->
     <RouterLink to="/" class="d-flex align-items-center justify-content-left py-2"
       ><img class="img-fluid" src="@/assets/img/Logo/ShelfLogoWhite.svg" alt="The Shelf Logo"
@@ -10,13 +13,13 @@
     <hr class="sidebar-divider my-0" />
 
     <!-- Nav Item - Dashboard -->
-    <li class="nav-item active">
+    <li class="nav-item active" @click.prevent="linkToggleSidebar()">
       <RouterLink to="/dashboard" class="nav-link">
         <i class="fas fa-fw fa-tachometer-alt"></i>
         <span>Dashboard</span>
       </RouterLink>
     </li>
-    <li class="nav-item active">
+    <li class="nav-item active" @click.prevent="linkToggleSidebar()">
       <RouterLink to="/collection/games" class="nav-link">
         <i class="fas fa-fw fa-layer-group"></i>
         <span>Collection</span>
@@ -90,7 +93,11 @@
 
     <!-- Sidebar Toggler (Sidebar) -->
     <div class="text-center d-none d-md-inline">
-      <button class="rounded-circle border-0" id="sidebarToggle"></button>
+      <button
+        class="rounded-circle border-0"
+        id="sidebarToggle"
+        @click.prevent="toggleSidebar()"
+      ></button>
     </div>
   </ul>
   <!-- End of Sidebar -->
@@ -98,6 +105,16 @@
 
 <script setup lang="ts">
 import { RouterLink } from 'vue-router'
+import { toggleSidebar } from '@/helpers/sidebarHelper'
+import { useWindowSize } from '@vueuse/core'
+
+const { width } = useWindowSize()
+
+const linkToggleSidebar = () => {
+  if (width.value < 768) {
+    toggleSidebar()
+  }
+}
 // import router from '@/router'
 
 // const active = () => {
