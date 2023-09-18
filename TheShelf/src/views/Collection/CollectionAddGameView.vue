@@ -1,5 +1,5 @@
 <template>
-  <div class="d-flex flex-column flex-md-row justify-content-center mb-2">
+  <div class="d-flex flex-column flex-md-row justify-content-between mb-2">
     <SearchBar @onSubmit="searchTitle" placeholder="Search for a game..." />
     <CollectionNavGroup />
   </div>
@@ -26,6 +26,7 @@
     :games="results"
     @openAddGameModal="openAddGameModal"
   />
+  <AppPagination :pageCount="19" :current-page="1" :first-page="true" :last-page="false" />
   <AddGameModal
     v-if="activeGame"
     :game="activeGame"
@@ -38,6 +39,7 @@
 import CollectionNavGroup from '@/components/gameCollection/CollectionNavGroup.vue'
 import SearchBar from '@/components/SearchBar.vue'
 import SearchTable from '@/components/gameCollection/SearchTable.vue'
+import AppPagination from '@/components/gameCollection/AppPagination.vue'
 import AddGameModal from '@/components/gameCollection/AddGameModal.vue'
 import {
   getGames,
@@ -48,7 +50,6 @@ import {
 import { loadingGamesEnum, loadingGameEnum } from '@/enums/modules/LoadingEnum'
 import { ref } from 'vue'
 import { useUserStore } from '@/stores/user'
-// import type { GameCollection } from '@/services/fireUserData'
 
 let results = ref([] as GameSearchResponse[])
 let loadingGamesStatus = ref('init')

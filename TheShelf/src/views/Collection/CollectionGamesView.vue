@@ -1,6 +1,13 @@
 <template>
-  <div class="d-flex flex-column flex-md-row justify-content-end mb-2">
+  <div class="d-flex flex-column flex-md-row justify-content-between mb-2 mb-md-4">
     <SearchBar @onSubmit="filterGames" placeholder="Search Collection" />
+    <SortCollection
+      class="order-2 order-md-0"
+      :disableButton="disableButton"
+      @sortName="sortName()"
+      @sortYear="sortYear()"
+      @sortRating="sortRating()"
+    />
     <CollectionNavGroup />
   </div>
   <div>
@@ -33,8 +40,10 @@
 <script lang="ts" setup>
 import SearchBar from '@/components/SearchBar.vue'
 import GameSummary from '@/components/gameCollection/GameSummary.vue'
+import SortCollection from '@/components/gameCollection/SortCollection.vue'
 import CollectionNavGroup from '@/components/gameCollection/CollectionNavGroup.vue'
 import { loadingGamesEnum } from '@/enums/modules/LoadingEnum'
+import { ratingAverage } from '@/helpers/ratingsHelpers'
 
 import { ref, onMounted } from 'vue'
 import { type GameType } from '@/services/fireGameData'
@@ -43,6 +52,7 @@ import { useUserStore } from '@/stores/user'
 const searchResults = ref([] as GameType[])
 const collection = ref([] as GameType[])
 const loadingGamesStatus = ref('init')
+const disableButton = ref('name')
 
 const filterGames = (query: string) => {
   const filteredGames = collection.value?.filter((game) => {
@@ -77,6 +87,48 @@ const loadCollection = async () => {
   }
 }
 
+const sortName = () => {
+  const sortedGames = searchResults.value.sort((a, b) => {
+    if (a.name < b.name) {
+      return -1
+    }
+    if (a.name > b.name) {
+      return 1
+    }
+    return 0
+  })
+  searchResults.value = sortedGames
+  disableButton.value = 'name'
+}
+
+const sortYear = () => {
+  const sortedGames = searchResults.value.sort((a, b) => {
+    if (a.yearPublished < b.yearPublished) {
+      return -1
+    }
+    if (a.yearPublished > b.yearPublished) {
+      return 1
+    }
+    return 0
+  })
+  searchResults.value = sortedGames
+  disableButton.value = 'year'
+}
+
+const sortRating = () => {
+  const sortedGames = searchResults.value.sort((a, b) => {
+    if (ratingAverage(a.rating) < ratingAverage(b.rating)) {
+      return -1
+    }
+    if (ratingAverage(a.rating) > ratingAverage(b.rating)) {
+      return 1
+    }
+    return 0
+  })
+  searchResults.value = sortedGames
+  disableButton.value = 'rating'
+}
+
 const removeGame = async (game: GameType) => {
   await useUserStore().deleteUserGame(game)
   await loadCollection()
@@ -84,8 +136,10 @@ const removeGame = async (game: GameType) => {
 }
 
 onMounted(async () => {
+  console.log('mounted')
   await loadCollection()
   searchResults.value = collection.value
+  sortName()
 })
 </script>
 

@@ -3,7 +3,7 @@
     <div class="col mb-2">
       <div class="card h-100">
         <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-          <h4 class="m-0 font-weight-bold text-primary">{{ game.name }}</h4>
+          <h4 class="m-0 font-weight-bold text-primary" v-html="game.name"></h4>
           <div class="dropdown no-arrow">
             <a
               class="dropdown-toggle"
@@ -38,7 +38,7 @@
 
         <div class="d-flex flex-column flex-md-row">
           <div class="col-md-4 p-2 d-flex align-items-center">
-            <img :src="game.image" class="card-img" />
+            <img :src="game.image" class="card-img img-fluid" />
           </div>
           <div class="p-3 d-flex flex-column">
             <div class="overflow-hidden" style="max-height: 50px">
@@ -66,49 +66,17 @@
 import LabelText from '@/components/gameCollection/LabelText.vue'
 import RemoveGameModal from '@/components/gameCollection/RemoveGameModal.vue'
 import { type GameType } from '@/services/fireGameData'
+import { ratingAverage } from '@/helpers/ratingsHelpers'
 import { ref } from 'vue'
 
 defineProps<{
   game: GameType
 }>()
 
-// type ratings = Pick<GameType, 'rating'>
-type ratings = {
-  '1star': number
-  '2star': number
-  '3star': number
-  '4star': number
-  '5star': number
-}
-
 const showRemoveGameModal = ref(false)
 
 const toggleRemoveGameModal = () => {
   showRemoveGameModal.value = !showRemoveGameModal.value
-}
-
-// const myRating = ref(3)
-
-const ratingAverage = (ratings: ratings) => {
-  if (ratings === undefined) {
-    return 0
-  }
-  const totalRatings =
-    ratings['1star'] + ratings['2star'] + ratings['3star'] + ratings['4star'] + ratings['5star']
-
-  if (totalRatings === 0) {
-    return 0
-  }
-
-  const totalScore =
-    ratings['1star'] +
-    ratings['2star'] * 2 +
-    ratings['3star'] * 3 +
-    ratings['4star'] * 4 +
-    ratings['5star'] * 5
-
-  const average = totalScore / totalRatings
-  return average.toFixed(1)
 }
 </script>
 

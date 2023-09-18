@@ -63,7 +63,7 @@ export async function updateFireUser(user: FireUser) {
   const userSnap = await getDoc(userRef)
 
   if (!userSnap.exists()) {
-    throw new Error('User do not exist')
+    throw new Error('User does not exist')
   }
 
   await updateDoc(userRef, { ...user })
@@ -75,7 +75,11 @@ export async function addFireUserGame(user: FireUser, game: GameCollection) {
   const userSnap = await getDoc(userRef)
 
   if (!userSnap.exists()) {
-    throw new Error('User do not exist')
+    throw new Error('User does not exist')
+  }
+
+  if (user.games.find((g) => g.gameId === game.gameId)) {
+    throw new Error('Game already exists')
   }
 
   await updateDoc(userRef, {
@@ -89,7 +93,7 @@ export async function deleteFireUserGame(user: FireUser, game: GameCollection) {
   const userSnap = await getDoc(userRef)
 
   if (!userSnap.exists()) {
-    throw new Error('User do not exist')
+    throw new Error('User does not exist')
   }
 
   await updateDoc(userRef, {
