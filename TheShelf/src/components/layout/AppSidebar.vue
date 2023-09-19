@@ -1,9 +1,6 @@
 <template>
   <!-- Sidebar -->
-  <ul
-    class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion toggled"
-    id="accordionSidebar"
-  >
+  <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
     <!-- Sidebar - Brand -->
     <RouterLink to="/" class="d-flex align-items-center justify-content-left py-2"
       ><img class="img-fluid" src="@/assets/img/Logo/ShelfLogoWhite.svg" alt="The Shelf Logo"
