@@ -2,47 +2,42 @@
   <div
     v-if="game"
     class="modal fade"
-    id="removeGameModal"
+    id="gameDescriptionModal"
     tabindex="-1"
-    aria-labelledby="removeGameModalLabel"
+    aria-labelledby="gameDescriptionModalLabel"
     aria-hidden="true"
   >
-    <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title text-primary" id="removeGameModalLabel">Confirm Removal</h5>
+          <h5
+            class="modal-title"
+            id="gameDescriptionModalLabel"
+            v-html="`${name} Description`"
+          ></h5>
           <button
             type="button"
             class="close"
             data-dismiss="modal"
             aria-label="Close"
-            @click.prevent="$emit('cancelDelete')"
+            @click.prevent="$emit('closeModal')"
           >
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
         <div class="modal-body">
-          <p class="text-lg">
-            Are you sure you want to remove <span v-html="name" /> from your collection?
-          </p>
+          <div class="overflow-auto p-2 mb-3 rounded">
+            <p v-html="game.description" />
+          </div>
         </div>
-
         <div class="modal-footer">
           <button
             type="button"
             class="btn btn-outline-secondary"
             data-dismiss="modal"
-            @click.prevent="$emit('cancelDelete')"
+            @click.prevent="$emit('closeModal')"
           >
-            Cancel
-          </button>
-          <button
-            type="button"
-            class="btn btn-danger"
-            data-dismiss="modal"
-            @click.prevent="$emit('deleteGame', game)"
-          >
-            Remove Game
+            Close
           </button>
         </div>
       </div>
@@ -51,8 +46,8 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
 import type { GameType } from '@/services/fireGameData'
+import { onMounted, ref } from 'vue'
 
 const name = ref('')
 

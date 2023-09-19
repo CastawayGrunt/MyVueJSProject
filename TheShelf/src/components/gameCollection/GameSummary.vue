@@ -28,7 +28,7 @@
                 class="dropdown-item text-danger"
                 data-toggle="modal"
                 data-target="#removeGameModal"
-                @click.prevent="toggleRemoveGameModal()"
+                @click.prevent="showRemoveGameModal()"
               >
                 Remove Game
               </button>
@@ -41,8 +41,16 @@
             <img :src="game.image" class="card-img img-fluid" />
           </div>
           <div class="p-3 d-flex flex-column">
-            <div class="overflow-hidden" style="max-height: 50px">
-              <p v-html="game.description" />
+            <div>
+              <span style="max-height: 75px" v-html="` ${game.description.substring(0, 115)}...`" />
+              <button
+                class="btn btn-link btn-sm text-right"
+                data-toggle="modal"
+                data-target="#gameDescriptionModal"
+                @click.prevent="showGameDescriptionModal()"
+              >
+                read more
+              </button>
             </div>
             <LabelText label="Players" :text="`${game.minPlayers} - ${game.maxPlayers}`" />
             <LabelText label="Play Time" :text="`${game.minPlaytime} - ${game.maxPlaytime} min`" />
@@ -54,10 +62,15 @@
       </div>
     </div>
     <RemoveGameModal
-      v-if="showRemoveGameModal"
+      v-if="removeGameModalVisible"
       :game="game"
       @deleteGame="$emit('onDeleteGame', game)"
-      @cancelDelete="toggleRemoveGameModal()"
+      @cancelDelete="hideRemoveGameModal()"
+    />
+    <DescriptionModal
+      v-if="gameDescriptionModalVisible"
+      :game="game"
+      @closeModal="hideGameDescriptionModal()"
     />
   </div>
 </template>
@@ -65,6 +78,7 @@
 <script lang="ts" setup>
 import LabelText from '@/components/gameCollection/LabelText.vue'
 import RemoveGameModal from '@/components/gameCollection/RemoveGameModal.vue'
+import DescriptionModal from '@/components/gameCollection/DescriptionModal.vue'
 import { type GameType } from '@/services/fireGameData'
 import { ratingAverage } from '@/helpers/ratingsHelpers'
 import { ref } from 'vue'
@@ -73,10 +87,21 @@ defineProps<{
   game: GameType
 }>()
 
-const showRemoveGameModal = ref(false)
+const removeGameModalVisible = ref(false)
+const gameDescriptionModalVisible = ref(false)
 
-const toggleRemoveGameModal = () => {
-  showRemoveGameModal.value = !showRemoveGameModal.value
+const showRemoveGameModal = () => {
+  removeGameModalVisible.value = true
+}
+const hideRemoveGameModal = () => {
+  removeGameModalVisible.value = false
+}
+
+const showGameDescriptionModal = () => {
+  gameDescriptionModalVisible.value = true
+}
+const hideGameDescriptionModal = () => {
+  gameDescriptionModalVisible.value = false
 }
 </script>
 
