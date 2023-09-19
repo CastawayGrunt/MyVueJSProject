@@ -13,16 +13,19 @@ import {
   addFireUser,
   getFireUser,
   addFireUserGame,
-  deleteFireUserGame
+  deleteFireUserGame,
+  updateFireUser
 } from '@/services/fireUserData'
 import type { GameIdResponse } from '@/services/boardGamesApi'
 import { addFireGame, getFireGame, type GameType } from '@/services/fireGameData'
 import { useStorage } from '@vueuse/core'
+import { deleteUserImage, uploadUserImage } from '@/services/fireFileBucket'
 
 const defaultUserLocal: FireUser = {
   id: '',
   displayName: '',
   email: '',
+  photoURL: '',
   dateCreated: '',
   games: [],
   lastPlayed: '',
@@ -70,6 +73,7 @@ export const useUserStore = defineStore('user', {
           id: userData.id,
           displayName: userData.displayName,
           email: userData.email,
+          photoURL: userData.photoURL,
           dateCreated: userData.dateCreated,
           games: userData.games,
           lastPlayed: userData.lastPlayed,
@@ -96,6 +100,7 @@ export const useUserStore = defineStore('user', {
           id: registeredUser.uid,
           displayName: user.displayName,
           email: user.email,
+          photoURL: user.photoURL,
           games: user.games,
           dateCreated: user.dateCreated,
           lastPlayed: user.lastPlayed,
@@ -111,6 +116,42 @@ export const useUserStore = defineStore('user', {
     async requestChangePasswordEmail(email: string) {
       const changePasswordEmailSent = await sendPasswordEmail(email)
       return changePasswordEmailSent
+    },
+    async uploadProfilePicture(file: File) {
+      const imageFilePath = `${this.user?.id}_${file.name}`
+      const url = await uploadUserImage(imageFilePath, file)
+
+      if (!url || url.length == 0) {
+        return null
+      }
+      if (!this.user) {
+        return null
+      }
+      this.user.photoURL = url
+      updateFireUser(this.user)
+
+      return url
+    },
+    async removeProfilePicture() {
+      const placeholderImg = '/img/undraw_profile.svg'
+      if (this.user?.photoURL.includes(placeholderImg)) {
+        return true
+      }
+
+      if (this.user?.photoURL) {
+        const imageUrl = new URL(this.user?.photoURL)
+        const imageName = imageUrl.pathname.split('/ProfilePictures%2F').at(-1)
+
+        if (!imageName) {
+          return false
+        }
+        await deleteUserImage(imageName)
+        this.user.photoURL = placeholderImg
+        updateFireUser(this.user)
+
+        return true
+      }
+      return false
     },
     async getGames() {
       if (this.user) {

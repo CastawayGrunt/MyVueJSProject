@@ -25,7 +25,7 @@
           aria-expanded="false"
         >
           <span class="mr-2 d-none d-md-inline text-gray-600 small">{{ displayName }}</span>
-          <img class="img-profile rounded-circle" src="img/undraw_profile.svg" />
+          <img class="img-profile rounded-circle" :src="profileURL" />
         </a>
         <!-- Dropdown - User Information -->
         <div
@@ -60,12 +60,22 @@
 <script lang="ts" setup>
 import { useUserStore } from '@/stores/user'
 import { useRouter } from 'vue-router'
-import { onMounted, ref } from 'vue'
+import { onMounted, watch, ref } from 'vue'
 import { toggleSidebar } from '@/helpers/sidebarHelper'
 
 const userStore = useUserStore()
 const $router = useRouter()
 const displayName = ref('')
+const profileURL = ref('')
+
+watch(
+  () => userStore.user?.photoURL,
+  async (photoURL) => {
+    if (photoURL !== undefined) {
+      profileURL.value = photoURL
+    }
+  }
+)
 
 onMounted(() => {
   if (userStore.user === null) {
@@ -74,6 +84,7 @@ onMounted(() => {
 
   if (userStore.user) {
     displayName.value = userStore.user.displayName
+    profileURL.value = userStore.user.photoURL
   }
 })
 

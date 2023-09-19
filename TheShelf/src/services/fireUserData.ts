@@ -13,6 +13,7 @@ export type FireUser = {
   id: string
   displayName: string
   email: string
+  photoURL: string
   dateCreated: string
   games: GameCollection[]
   lastPlayed: string

@@ -13,7 +13,7 @@ export type Credentials = {
   password: string
 }
 
-type FireRegisterUserInfo = Omit<FireUser, 'games,lastPlayed,mostPlayed'>
+type FireRegisterUserInfo = Omit<FireUser, 'games,lastPlayed,mostPlayed,photoURL'>
 
 export const registerUser = async ({ email, password }: Credentials) => {
   const auth = getAuth()
