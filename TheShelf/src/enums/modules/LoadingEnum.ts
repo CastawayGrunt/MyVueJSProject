@@ -6,8 +6,6 @@ export const loadingGamesEnum = {
 }
 
 export const loadingGameEnum = {
-  //   init: 'init',
   resultsLoading: 'resultsLoading',
   resultsLoaded: 'resultsLoaded'
-  //   noResults: 'noResults'
 }

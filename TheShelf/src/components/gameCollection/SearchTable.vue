@@ -18,6 +18,7 @@
           </td>
           <td>
             <button
+              :disabled="gameExists(game['@_id'])"
               class="btn btn-primary btn-sm"
               data-toggle="modal"
               data-target="#addGameModal"
@@ -34,10 +35,22 @@
 
 <script lang="ts" setup>
 import { type GameSearchResponse } from '@/services/boardGamesApi'
+import { useUserStore } from '@/stores/user'
 
 defineProps<{
   games: GameSearchResponse[]
 }>()
+
+const userStore = useUserStore()
+const gameExists = (gameId: number): boolean => {
+  let gameExists = false
+  userStore.user?.games?.find((game) => {
+    if (game.gameId === gameId?.toString()) {
+      return (gameExists = true)
+    }
+  })
+  return gameExists
+}
 </script>
 
 <style scoped></style>
