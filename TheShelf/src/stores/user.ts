@@ -1,22 +1,34 @@
 import { defineStore } from 'pinia'
 import {
+  type Credentials,
   loginUser,
   logoutUser,
   registerUser,
   sendPasswordEmail,
   updateUserProfile
 } from '@/services/fireUserAuth'
-import type { Credentials } from '@/services/fireUserAuth'
 import {
   type FireUser,
+  type GameCollection,
   addFireUser,
   getFireUser,
   addFireUserGame,
-  type GameCollection,
   deleteFireUserGame
 } from '@/services/fireUserData'
 import type { GameIdResponse } from '@/services/boardGamesApi'
 import { addFireGame, getFireGame, type GameType } from '@/services/fireGameData'
+import { useStorage } from '@vueuse/core'
+
+const defaultUserLocal: FireUser = {
+  id: '',
+  displayName: '',
+  email: '',
+  dateCreated: '',
+  games: [],
+  lastPlayed: '',
+  mostPlayed: ''
+}
+const userLocalStorage = useStorage('user', defaultUserLocal)
 
 export const useUserStore = defineStore('user', {
   state: () => {
@@ -31,16 +43,30 @@ export const useUserStore = defineStore('user', {
         return false
       }
       return this.user.id !== null
+    },
+    getUser(): FireUser | null {
+      if (userLocalStorage.value.id === '') {
+        return (this.user = null)
+      }
+      return (this.user = userLocalStorage.value)
     }
   },
   actions: {
+    init() {
+      if (this.user) {
+        return
+      }
+      this.user = userLocalStorage.value
+      console.log('init', this.user)
+    },
     async login({ email, password }: Credentials) {
+      userLocalStorage.value = null
       const userAccount = await loginUser({ email, password })
 
       if (userAccount.user.displayName != null && userAccount.user.email != null) {
         const userData = await getFireUser(userAccount.user.uid)
         console.log('userdata', userData)
-        return (this.user = {
+        userLocalStorage.value = {
           id: userData.id,
           displayName: userData.displayName,
           email: userData.email,
@@ -48,7 +74,9 @@ export const useUserStore = defineStore('user', {
           games: userData.games,
           lastPlayed: userData.lastPlayed,
           mostPlayed: userData.mostPlayed
-        })
+        }
+        this.user = userLocalStorage.value
+        return true
       } else {
         this.user = null
         return false
@@ -57,6 +85,7 @@ export const useUserStore = defineStore('user', {
     async logout() {
       await logoutUser()
       this.user = null
+      userLocalStorage.value = null
     },
     async register({ email, password }: Credentials, user: FireUser) {
       const registeredUser = await registerUser({ email, password })
