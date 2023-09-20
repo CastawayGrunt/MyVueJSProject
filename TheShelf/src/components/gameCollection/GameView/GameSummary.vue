@@ -22,7 +22,7 @@
             >
               <div class="dropdown-header">Options:</div>
               <button class="dropdown-item">Edit Game</button>
-              <button class="dropdown-item">Log Play</button>
+              <button class="dropdown-item" @click.prevent="$emit('logPlay')">Log Play</button>
               <div class="dropdown-divider"></div>
               <button
                 class="dropdown-item text-danger"
@@ -43,14 +43,15 @@
           <div class="p-3 d-flex flex-column">
             <div>
               <span style="max-height: 75px" v-html="` ${game.description.substring(0, 115)}...`" />
-              <button
+              <!-- TODO: fix this modal -->
+              <!-- <button
                 class="btn btn-link btn-sm text-right"
                 data-toggle="modal"
                 data-target="#gameDescriptionModal"
                 @click.prevent="showGameDescriptionModal()"
               >
                 read more
-              </button>
+              </button> -->
             </div>
             <LabelText label="Players" :text="`${game.minPlayers} - ${game.maxPlayers}`" />
             <LabelText label="Play Time" :text="`${game.minPlaytime} - ${game.maxPlaytime} min`" />
@@ -77,8 +78,8 @@
 
 <script lang="ts" setup>
 import LabelText from '@/components/gameCollection/LabelText.vue'
-import RemoveGameModal from '@/components/gameCollection/RemoveGameModal.vue'
-import DescriptionModal from '@/components/gameCollection/DescriptionModal.vue'
+import RemoveGameModal from '@/components/gameCollection/GameView/RemoveGameModal.vue'
+import DescriptionModal from '@/components/gameCollection/GameView/DescriptionModal.vue'
 import { type GameType } from '@/services/fireGameData'
 import { ratingAverage } from '@/helpers/ratingsHelpers'
 import { ref } from 'vue'
@@ -97,9 +98,9 @@ const hideRemoveGameModal = () => {
   removeGameModalVisible.value = false
 }
 
-const showGameDescriptionModal = () => {
-  gameDescriptionModalVisible.value = true
-}
+// const showGameDescriptionModal = () => {
+//   gameDescriptionModalVisible.value = true
+// }
 const hideGameDescriptionModal = () => {
   gameDescriptionModalVisible.value = false
 }

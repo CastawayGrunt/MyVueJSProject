@@ -23,7 +23,8 @@
         </div>
         <div class="modal-body">
           <p class="text-lg">
-            Are you sure you want to remove <span v-html="name" /> from your collection?
+            Are you sure you want to remove <span class="font-weight-bold" v-html="name" /> from
+            your collection?
           </p>
         </div>
 

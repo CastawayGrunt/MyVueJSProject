@@ -39,8 +39,8 @@
 
 <script lang="ts" setup>
 import SearchBar from '@/components/SearchBar.vue'
-import GameSummary from '@/components/gameCollection/GameSummary.vue'
-import SortCollection from '@/components/gameCollection/SortCollection.vue'
+import GameSummary from '@/components/gameCollection/GameView/GameSummary.vue'
+import SortCollection from '@/components/gameCollection/GameView/SortCollection.vue'
 import CollectionNavGroup from '@/components/gameCollection/CollectionNavGroup.vue'
 import { loadingGamesEnum } from '@/enums/modules/LoadingEnum'
 import { ratingAverage } from '@/helpers/ratingsHelpers'

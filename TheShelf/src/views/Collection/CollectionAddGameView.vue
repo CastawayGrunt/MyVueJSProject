@@ -45,11 +45,11 @@
 </template>
 
 <script lang="ts" setup>
-import CollectionNavGroup from '@/components/gameCollection/CollectionNavGroup.vue'
 import SearchBar from '@/components/SearchBar.vue'
-import SearchTable from '@/components/gameCollection/SearchTable.vue'
+import CollectionNavGroup from '@/components/gameCollection/CollectionNavGroup.vue'
 import AppPagination from '@/components/gameCollection/AppPagination.vue'
-import AddGameModal from '@/components/gameCollection/AddGameModal.vue'
+import SearchTable from '@/components/gameCollection/GameAdd/SearchTable.vue'
+import AddGameModal from '@/components/gameCollection/GameAdd/AddGameModal.vue'
 import {
   getGameDetails,
   type GameSearchResponse,
