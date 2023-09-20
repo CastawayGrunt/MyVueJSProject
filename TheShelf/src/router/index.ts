@@ -80,6 +80,7 @@ const router = createRouter({
           path: 'edit-game/:id',
           name: 'editGame',
           component: () => import('@/views/Collection/CollectionEditGameView.vue'),
+          props: true,
           meta: {
             auth: true,
             frame: true

@@ -3,20 +3,8 @@
   <RouterView />
 </template>
 
-<script lang="ts">
+<script lang="ts" setup>
 import AppHeader from '@/components/layout/AppHeader.vue'
-
-export default {
-  name: 'CollectionView',
-  data() {
-    return {}
-  },
-  components: {
-    AppHeader
-  },
-  methods: {},
-  mounted() {}
-}
 </script>
 
 <style scoped></style>

@@ -21,7 +21,7 @@
               aria-labelledby="dropdownMenuLink"
             >
               <div class="dropdown-header">Options:</div>
-              <button class="dropdown-item">Edit Game</button>
+              <button class="dropdown-item" @click.prevent="viewGameClicked()">View Game</button>
               <button class="dropdown-item" @click.prevent="$emit('logPlay')">Log Play</button>
               <div class="dropdown-divider"></div>
               <button
@@ -83,13 +83,15 @@ import DescriptionModal from '@/components/gameCollection/GameView/DescriptionMo
 import { type GameType } from '@/services/fireGameData'
 import { ratingAverage } from '@/helpers/ratingsHelpers'
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 
-defineProps<{
+const props = defineProps<{
   game: GameType
 }>()
 
 const removeGameModalVisible = ref(false)
 const gameDescriptionModalVisible = ref(false)
+const router = useRouter()
 
 const showRemoveGameModal = () => {
   removeGameModalVisible.value = true
@@ -103,6 +105,10 @@ const hideRemoveGameModal = () => {
 // }
 const hideGameDescriptionModal = () => {
   gameDescriptionModalVisible.value = false
+}
+
+const viewGameClicked = () => {
+  router.push({ name: 'editGame', params: { id: props.game.bggId } })
 }
 </script>
 
