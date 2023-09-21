@@ -93,6 +93,24 @@
         </div>
       </div>
     </div>
+    <div class="col-xl-3 col-6 mb-4">
+      <RouterLink
+        class="bg-primary p-4 h-100 d-flex flex-column align-items-center justify-content-center rounded nav-link"
+        to="collection/games"
+      >
+        <i class="fas fa-layer-group fa-2x text-white mb-2"></i>
+        <div class="text-center font-weight-bold text-white">View Collection</div>
+      </RouterLink>
+    </div>
+    <div class="col-xl-3 col-6 mb-4">
+      <RouterLink
+        class="bg-info p-4 h-100 d-flex flex-column align-items-center justify-content-center rounded nav-link"
+        to="collection/add-game"
+      >
+        <i class="fas fa-plus fa-2x text-white mb-2"></i>
+        <div class="text-center font-weight-bold text-white">Add Game</div>
+      </RouterLink>
+    </div>
   </div>
 
   <!-- End of Main Content -->
