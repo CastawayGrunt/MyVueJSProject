@@ -6,14 +6,7 @@
   <div v-if="loadingGamesStatus === loadingGamesEnum.init" class="d-flex justify-content-center">
     <p class="text-center">Use the search bar to find a game</p>
   </div>
-  <div
-    v-else-if="loadingGamesStatus === loadingGamesEnum.resultsLoading"
-    class="d-flex justify-content-center align-items-center h-100"
-  >
-    <div class="spinner-border text-primary" role="status">
-      <span class="sr-only">Loading...</span>
-    </div>
-  </div>
+  <LoadingSpinner v-else-if="loadingGamesStatus === loadingGamesEnum.resultsLoading" />
   <div
     v-else-if="loadingGamesStatus === loadingGamesEnum.noResults"
     class="d-flex justify-content-center"
@@ -46,6 +39,7 @@
 
 <script lang="ts" setup>
 import SearchBar from '@/components/SearchBar.vue'
+import LoadingSpinner from '@/components/LoadingSpinner.vue'
 import CollectionNavGroup from '@/components/gameCollection/CollectionNavGroup.vue'
 import AppPagination from '@/components/gameCollection/AppPagination.vue'
 import SearchTable from '@/components/gameCollection/GameAdd/SearchTable.vue'

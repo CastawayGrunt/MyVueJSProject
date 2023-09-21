@@ -14,14 +14,7 @@
     <p v-if="loadingGamesStatus === loadingGamesEnum.init" class="d-flex justify-content-center">
       Start your collection by clicking Add New Game
     </p>
-    <div
-      v-else-if="loadingGamesStatus === loadingGamesEnum.resultsLoading"
-      class="d-flex justify-content-center align-items-center h-100"
-    >
-      <div class="spinner-border text-primary" role="status">
-        <span class="sr-only">Loading...</span>
-      </div>
-    </div>
+    <LoadingSpinner v-else-if="loadingGamesStatus === loadingGamesEnum.resultsLoading" />
     <div
       class="row row-cols-1 row-cols-lg-2"
       v-else-if="loadingGamesStatus === loadingGamesEnum.resultsLoaded"
@@ -39,6 +32,7 @@
 
 <script lang="ts" setup>
 import SearchBar from '@/components/SearchBar.vue'
+import LoadingSpinner from '@/components/LoadingSpinner.vue'
 import GameSummary from '@/components/gameCollection/GameView/GameSummary.vue'
 import SortCollection from '@/components/gameCollection/GameView/SortCollection.vue'
 import CollectionNavGroup from '@/components/gameCollection/CollectionNavGroup.vue'
@@ -130,9 +124,11 @@ const sortRating = () => {
 }
 
 const removeGame = async (game: GameType) => {
-  await useUserStore().deleteUserGame(game)
-  await loadCollection()
-  searchResults.value = collection.value
+  const gameRemoved = await useUserStore().deleteUserGame(game)
+  if (gameRemoved) {
+    collection.value = collection.value.filter((g) => g.bggId !== game.bggId)
+    searchResults.value = collection.value
+  }
 }
 
 onMounted(async () => {

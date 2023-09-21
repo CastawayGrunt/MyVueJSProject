@@ -38,7 +38,7 @@
               </div>
             </div>
             <div class="col-auto">
-              <i class="fas fa-chess-board fa-2x text-gray-300"></i>
+              <i class="fas fa-dungeon fa-2x text-gray-300"></i>
             </div>
           </div>
         </div>
@@ -65,7 +65,7 @@
             </div>
             <div class="col-auto d-flex justify-content-center">
               <div class="text-lg text-gray-700 d-flex justify-content-center">
-                <i class="fas fa-trophy fa-2x text-gray-300"></i>
+                <i class="text-center fas fa-trophy fa-2x text-gray-300"></i>
               </div>
             </div>
           </div>
