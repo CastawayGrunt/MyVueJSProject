@@ -3,7 +3,11 @@
     <div class="col mb-2">
       <div class="card h-100">
         <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-          <h4 class="m-0 font-weight-bold text-primary" v-html="game.name"></h4>
+          <h4
+            class="m-0 font-weight-bold text-primary"
+            v-html="game.name"
+            @click.prevent="viewGameClicked()"
+          ></h4>
           <div class="dropdown no-arrow">
             <a
               class="dropdown-toggle"
@@ -57,7 +61,7 @@
             <LabelText label="Play Time" :text="`${game.minPlaytime} - ${game.maxPlaytime} min`" />
             <LabelText label="Age" :text="`${game.minAge}+`" />
             <LabelText label="Year Published" :text="`${game.yearPublished}`" />
-            <LabelText label="Avg. User Rating" :text="`${ratingAverage(game.rating)}/5 `" />
+            <GameRating :rating="game?.rating" />
           </div>
         </div>
       </div>
@@ -78,10 +82,10 @@
 
 <script lang="ts" setup>
 import LabelText from '@/components/gameCollection/LabelText.vue'
+import GameRating from '@/components/gameCollection/GameView/GameRating.vue'
 import RemoveGameModal from '@/components/gameCollection/GameView/RemoveGameModal.vue'
 import DescriptionModal from '@/components/gameCollection/GameView/DescriptionModal.vue'
 import { type GameType } from '@/services/fireGameData'
-import { ratingAverage } from '@/helpers/ratingsHelpers'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 

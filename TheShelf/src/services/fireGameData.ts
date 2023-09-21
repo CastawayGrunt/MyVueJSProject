@@ -1,7 +1,15 @@
 import { useFirestore } from 'vuefire'
-import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore'
+import { doc, getDoc, setDoc, updateDoc, increment } from 'firebase/firestore'
 import type { GameIdResponse } from './boardGamesApi'
 import { findGameName } from '@/helpers/stringHelpers'
+
+export type Ratings = {
+  '1star': number
+  '2star': number
+  '3star': number
+  '4star': number
+  '5star': number
+}
 
 export type GameType = {
   bggId: string
@@ -13,13 +21,7 @@ export type GameType = {
   maxPlaytime: number
   minAge: number
   yearPublished: number
-  rating: {
-    '1star': number
-    '2star': number
-    '3star': number
-    '4star': number
-    '5star': number
-  }
+  rating: Ratings
   image: string
 }
 
@@ -67,30 +69,44 @@ export async function addFireGame(game: GameIdResponse) {
   return newGame
 }
 
-export async function updateFireGame(game: GameType) {
+export async function changeFireGameRating(game: GameType, rating: number, plusOrMinus: boolean) {
   const db = useFirestore()
-  const gameRef = doc(db, 'boardgames', game.bggId)
+  const gameRef = doc(db, 'games', game.bggId)
   const gameSnap = await getDoc(gameRef)
 
   if (!gameSnap.exists()) {
-    throw new Error('game do not exist')
+    throw new Error('game does not exist')
+  }
+  if (rating < 1 || rating > 5) {
+    throw new Error('rating must be between 1 and 5')
   }
 
-  await updateDoc(gameRef, {
-    bggId: game.bggId,
-    name: game.name,
-    description: game.description,
-    minPlayers: game.minPlayers,
-    maxPlayers: game.maxPlayers,
-    minPlaytime: game.minPlaytime,
-    maxPlaytime: game.maxPlaytime,
-    minAge: game.minAge,
-    yearPublished: game.yearPublished,
-    rating: [],
-    image: game.image
-  })
-}
+  const incrementValue = plusOrMinus ? 1 : -1
 
+  if (rating == 1) {
+    await updateDoc(gameRef, {
+      'rating.1star': increment(incrementValue)
+    })
+  } else if (rating == 2) {
+    await updateDoc(gameRef, {
+      'rating.2star': increment(incrementValue)
+    })
+  } else if (rating == 3) {
+    await updateDoc(gameRef, {
+      'rating.3star': increment(incrementValue)
+    })
+  } else if (rating == 4) {
+    await updateDoc(gameRef, {
+      'rating.4star': increment(incrementValue)
+    })
+  } else if (rating == 5) {
+    await updateDoc(gameRef, {
+      'rating.5star': increment(incrementValue)
+    })
+  }
+
+  return game
+}
 // export async function deleteFireGame(game: GameType) {
 //   const db = useFirestore()
 //   const gameRef = doc(db, 'boardgames', game.id)

@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { START_LOCATION, createRouter, createWebHistory } from 'vue-router'
 import HomeView from '@/views/HomeView.vue'
 import DashboardView from '@/views/DashboardView.vue'
 import LoginView from '@/views/LoginView.vue'
@@ -12,6 +12,7 @@ import { useUserStore } from '@/stores/user'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
+  scrollBehavior: () => ({ top: 0 }),
   routes: [
     {
       path: '/',
@@ -118,7 +119,7 @@ const router = createRouter({
   ]
 })
 
-router.beforeEach(async (to) => {
+router.beforeEach(async (to, from) => {
   const userStore = useUserStore()
   if (to.path === '/' && userStore.isAuthenticated) {
     return { name: 'dashboard' }
@@ -128,6 +129,9 @@ router.beforeEach(async (to) => {
   // }
   if (to.meta.auth && !userStore.isAuthenticated) {
     return { name: 'login' }
+  }
+  if (from === START_LOCATION && userStore.isAuthenticated) {
+    await useUserStore().getGames()
   }
 })
 

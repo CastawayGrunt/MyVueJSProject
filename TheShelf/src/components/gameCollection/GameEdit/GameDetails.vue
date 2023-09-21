@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="col mb-2">
+    <div class="mb-2">
       <div class="card h-100">
         <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
           <h4 class="m-0 font-weight-bold text-primary" v-html="game?.name"></h4>
@@ -49,22 +49,66 @@
               />
               <LabelText label="Age" :text="`${game?.minAge}+`" />
               <LabelText label="Year Published" :text="`${game?.yearPublished}`" />
-              <LabelText label="Avg. User Rating" :text="`${ratingAverage(game?.rating)}/5 `" />
+              <GameRating :rating="game?.rating" />
             </div>
           </div>
-          <div>
-            <span style="max-height: 75px" v-html="` ${game?.description}`" />
+          <div
+            class="overflow-auto border border-primary p-2 px-3 rounded m-2"
+            style="max-height: 105px"
+          >
+            <span v-html="` ${game?.description}`" />
           </div>
-          <hr class="bg-primary mx-2" />
           <div class="d-flex flex-column p-3">
-            <LabelText label="Your Rating" :text="`${currentRating}/5 `" />
-            <form :onsubmit="submitRating()">
-              <div class="rating">
-                <input type="radio" name="rating" value="5" id="5" /><label for="5">☆</label>
-                <input type="radio" name="rating" value="4" id="4" /><label for="4">☆</label>
-                <input type="radio" name="rating" value="3" id="3" /><label for="3">☆</label>
-                <input type="radio" name="rating" value="2" id="2" /><label for="2">☆</label>
-                <input type="radio" name="rating" value="1" id="1" /><label for="1">☆</label>
+            <form>
+              <div class="d-flex flex-column flex-md-row">
+                <div class="label font-weight-bold d-flex align-items-center">
+                  Your Rating:
+                  <div class="rating">
+                    <input
+                      type="radio"
+                      name="rating"
+                      :value="5"
+                      id="5"
+                      v-model="userRating"
+                    /><label for="5">&#9734;</label>
+                    <input
+                      type="radio"
+                      name="userRating"
+                      :value="4"
+                      id="4"
+                      v-model="userRating"
+                    /><label for="4">&#9734;</label>
+                    <input
+                      type="radio"
+                      name="userRating"
+                      :value="3"
+                      id="3"
+                      v-model="userRating"
+                    /><label for="3">&#9734;</label>
+                    <input
+                      type="radio"
+                      name="userRating"
+                      :value="2"
+                      id="2"
+                      v-model="userRating"
+                    /><label for="2">&#9734;</label>
+                    <input
+                      type="radio"
+                      name="userRating"
+                      :value="1"
+                      id="1"
+                      v-model="userRating"
+                    /><label for="1">&#9734;</label>
+                  </div>
+                </div>
+                <button
+                  v-if="ratingChanged"
+                  class="btn btn-outline-primary mb-2 ml-md-2"
+                  type="submit"
+                  @click.prevent="submitRating(userRating)"
+                >
+                  Submit Rating
+                </button>
               </div>
             </form>
             <LabelText label="Comment" :text="`${userGameInfo.comment}`" />
@@ -78,30 +122,56 @@
 
 <script lang="ts" setup>
 import LabelText from '@/components/gameCollection/LabelText.vue'
+import GameRating from '@/components/gameCollection/GameView/GameRating.vue'
 import { type GameType } from '@/services/fireGameData'
-import { ratingAverage } from '@/helpers/ratingsHelpers'
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import type { GameCollection } from '@/services/fireUserData'
+import { useUserStore } from '@/stores/user'
 
 const props = defineProps<{
   game: GameType
   userGameInfo: GameCollection
 }>()
 
-const newRating = ref(0)
-const currentRating = ref(0)
+const userRating = ref(0)
+const ratingChanged = ref(true)
 
-const submitRating = () => {
-  newRating.value = currentRating.value
-  console.log(currentRating.value)
+watch(
+  () => userRating.value,
+  (userRating) => {
+    if (userRating === props.userGameInfo.rating) {
+      ratingChanged.value = false
+      return
+    }
+    ratingChanged.value = true
+  }
+)
+
+watch(
+  () => props.userGameInfo,
+  (userGameInfo) => {
+    if (userGameInfo !== null || userGameInfo !== undefined) {
+      userRating.value = userGameInfo.rating
+    }
+  }
+)
+
+const submitRating = async (newRating: number) => {
+  const ratingSuccuess = await useUserStore().updateGameRating(props.game, newRating)
+  if (ratingSuccuess === false) {
+    return
+  }
+  userRating.value = newRating
+
+  ratingChanged.value = false
+  return (ratingChanged.value = false)
 }
 
 onMounted(() => {
   if (props.userGameInfo.rating === undefined) {
-    currentRating.value = 0
-    return
+    userRating.value = 0
   } else {
-    currentRating.value = props.userGameInfo.rating
+    userRating.value = props.userGameInfo.rating
   }
 })
 
@@ -152,5 +222,28 @@ onMounted(() => {
 
 .rating:hover > input:checked ~ label:before {
   opacity: 0.4;
+}
+
+/* scroll bar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #4e73df;
+  border-radius: 8px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #415fb9;
 }
 </style>

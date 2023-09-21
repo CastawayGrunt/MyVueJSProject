@@ -1,13 +1,6 @@
-// type ratings = Pick<GameType, 'rating'>
-type ratings = {
-  '1star': number
-  '2star': number
-  '3star': number
-  '4star': number
-  '5star': number
-}
+import { type Ratings } from '@/services/fireGameData'
 
-export const ratingAverage = (ratings: ratings) => {
+export const ratingAverage = (ratings: Ratings) => {
   if (ratings === undefined) {
     return 0
   }
@@ -26,5 +19,18 @@ export const ratingAverage = (ratings: ratings) => {
     ratings['5star'] * 5
 
   const average = totalScore / totalRatings
-  return average.toFixed(1)
+
+  const formattedAverage = () => {
+    if (!average.toString().includes('0')) {
+      return average
+    }
+    return average.toFixed(1)
+  }
+
+  const rating = {
+    formattedAverageString: formattedAverage(),
+    totalRatings: totalRatings
+  }
+
+  return rating
 }

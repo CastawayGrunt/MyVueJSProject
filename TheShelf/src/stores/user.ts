@@ -17,7 +17,12 @@ import {
   updateFireUser
 } from '@/services/fireUserData'
 import type { GameIdResponse } from '@/services/boardGamesApi'
-import { addFireGame, getFireGame, type GameType } from '@/services/fireGameData'
+import {
+  addFireGame,
+  getFireGame,
+  type GameType,
+  changeFireGameRating
+} from '@/services/fireGameData'
 import { useStorage } from '@vueuse/core'
 import { deleteUserImage, uploadUserImage } from '@/services/fireFileBucket'
 
@@ -128,7 +133,7 @@ export const useUserStore = defineStore('user', {
         return null
       }
       this.user.photoURL = url
-      updateFireUser(this.user)
+      await updateFireUser(this.user)
 
       return url
     },
@@ -147,7 +152,7 @@ export const useUserStore = defineStore('user', {
         }
         await deleteUserImage(imageName)
         this.user.photoURL = placeholderImg
-        updateFireUser(this.user)
+        await updateFireUser(this.user)
 
         return true
       }
@@ -206,20 +211,61 @@ export const useUserStore = defineStore('user', {
         return
       }
     },
+    async updateGameRating(game: GameType, rating: number) {
+      if (!this.games || !this.user) {
+        return false
+      }
+
+      const gameToUpdate = this.user?.games.find((g) => g.gameId === game.bggId)
+      const currentRating = this.user?.games.find((g) => g.gameId === game.bggId)?.rating
+
+      if (gameToUpdate) {
+        gameToUpdate.rating = rating
+        await updateFireUser(this.user)
+      }
+
+      if (currentRating === null) {
+        const updatedGame = await changeFireGameRating(game, rating, true)
+        const index = this.games.findIndex((g) => g.bggId === game.bggId)
+        if (index >= 0) {
+          this.games[index] = updatedGame
+        }
+      }
+      if (currentRating !== null && currentRating && currentRating >= 1 && currentRating <= 5) {
+        await changeFireGameRating(game, currentRating, false)
+        const gameNewRating = await changeFireGameRating(game, rating, true)
+        const index = this.games.findIndex((g) => g.bggId === game.bggId)
+        if (index >= 0) {
+          this.games[index] = gameNewRating
+        }
+      }
+      return true
+    },
+    // async updateUserGameRating(game: GameType, rating: number) {
+    //   if (!this.games) {
+    //     return false
+    //   }
+    //   const updatedGame = await updateFireUser(game, rating)
+    //   const index = this.games.findIndex((g) => g.bggId === game.bggId)
+    //   if (index >= 0) {
+    //     this.games[index] = updatedGame
+    //   }
+    //   return true
+    // },
     async deleteUserGame(game: GameType) {
       if (this.user) {
         const gameIndex = this.user.games.findIndex((g) => g.gameId === game.bggId)
         const GametoRemove = this.user.games[gameIndex]
 
         if (gameIndex === -1) {
-          throw new Error('Game does not exist')
+          return false
         }
         if (gameIndex > -1) {
-          const success = await deleteFireUserGame(this.user, GametoRemove)
+          await deleteFireUserGame(this.user, GametoRemove)
           this.user.games.splice(gameIndex, 1)
           this.games?.splice(gameIndex, 1)
 
-          return success
+          return true
         }
       }
     }
