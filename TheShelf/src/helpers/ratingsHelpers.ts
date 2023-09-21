@@ -1,14 +1,20 @@
 import { type Ratings } from '@/services/fireGameData'
 
 export const ratingAverage = (ratings: Ratings) => {
-  if (ratings === undefined) {
-    return 0
+  let rating = {
+    formattedAverageString: '0',
+    totalRatings: 0
   }
+
+  if (ratings === undefined) {
+    return rating
+  }
+
   const totalRatings =
     ratings['1star'] + ratings['2star'] + ratings['3star'] + ratings['4star'] + ratings['5star']
 
   if (totalRatings === 0) {
-    return 0
+    return rating
   }
 
   const totalScore =
@@ -22,15 +28,13 @@ export const ratingAverage = (ratings: Ratings) => {
 
   const formattedAverage = () => {
     if (!average.toString().includes('0')) {
-      return average
+      return average.toString()
     }
     return average.toFixed(1)
   }
 
-  const rating = {
+  return (rating = {
     formattedAverageString: formattedAverage(),
     totalRatings: totalRatings
-  }
-
-  return rating
+  })
 }

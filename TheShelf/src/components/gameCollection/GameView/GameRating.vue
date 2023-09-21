@@ -35,10 +35,10 @@ onMounted(() => {
 const findDbGameRating = (rating: Ratings | undefined) => {
   if (rating !== undefined) {
     const dbGameRating = ratingAverage(rating)
-    if (dbGameRating === 0) {
+    if (dbGameRating.totalRatings === 0) {
       gameRating.value = '0'
     } else {
-      gameRating.value = dbGameRating.formattedAverageString.toString()
+      gameRating.value = dbGameRating.formattedAverageString
       numberOfRatings.value = dbGameRating.totalRatings
     }
   }

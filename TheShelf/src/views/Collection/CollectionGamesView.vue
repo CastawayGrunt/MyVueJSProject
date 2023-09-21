@@ -111,10 +111,12 @@ const sortYear = () => {
 
 const sortRating = () => {
   const sortedGames = searchResults.value.sort((a, b) => {
-    if (ratingAverage(a.rating) > ratingAverage(b.rating)) {
+    const aRating = ratingAverage(a.rating)
+    const bRating = ratingAverage(b.rating)
+    if (aRating.formattedAverageString > bRating.formattedAverageString) {
       return -1
     }
-    if (ratingAverage(a.rating) < ratingAverage(b.rating)) {
+    if (aRating.formattedAverageString < bRating.formattedAverageString) {
       return 1
     }
     return 0
