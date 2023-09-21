@@ -2,12 +2,12 @@
   <div>
     <div class="col mb-2">
       <div class="card h-100">
-        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-          <h4
-            class="m-0 font-weight-bold text-primary"
-            v-html="game.name"
-            @click.prevent="viewGameClicked()"
-          ></h4>
+        <div class="card-header d-flex flex-row align-items-center justify-content-between">
+          <RouterLink
+            :to="{ name: 'editGame', params: { id: game.bggId } }"
+            class="h4 m-0 font-weight-bold text-primary nav-link"
+            ><span v-html="game.name"
+          /></RouterLink>
           <div class="dropdown no-arrow">
             <a
               class="dropdown-toggle"
@@ -46,7 +46,16 @@
           </div>
           <div class="p-3 d-flex flex-column">
             <div>
-              <span style="max-height: 75px" v-html="` ${game.description.substring(0, 115)}...`" />
+              <!-- style from Kevin Powell youtube short -->
+              <span
+                style="
+                  display: -webkit-box;
+                  -webkit-box-orient: vertical;
+                  -webkit-line-clamp: 4;
+                  overflow: hidden;
+                "
+                v-html="game.description"
+              />
               <!-- TODO: fix this modal -->
               <!-- <button
                 class="btn btn-link btn-sm text-right"

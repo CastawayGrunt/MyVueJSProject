@@ -104,6 +104,7 @@
 import { RouterLink } from 'vue-router'
 import { toggleSidebar } from '@/helpers/sidebarHelper'
 import { useWindowSize } from '@vueuse/core'
+import { watch } from 'vue'
 
 const { width } = useWindowSize()
 
@@ -112,6 +113,15 @@ const linkToggleSidebar = () => {
     toggleSidebar()
   }
 }
+
+watch(
+  () => width.value,
+  (newWidth, oldWidth) => {
+    if (newWidth < 768 && oldWidth > 768) {
+      toggleSidebar()
+    }
+  }
+)
 // import router from '@/router'
 
 // const active = () => {
