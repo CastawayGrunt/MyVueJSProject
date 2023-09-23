@@ -4,7 +4,7 @@
       <div class="card h-100">
         <div class="card-header d-flex flex-row align-items-center justify-content-between">
           <RouterLink
-            :to="{ name: 'editGame', params: { id: game.bggId } }"
+            :to="{ name: 'viewGame', params: { id: game.bggId } }"
             class="h4 m-0 font-weight-bold text-primary nav-link"
             ><span v-html="game.name"
           /></RouterLink>
@@ -121,7 +121,7 @@ const hideGameDescriptionModal = () => {
 }
 
 const viewGameClicked = () => {
-  router.push({ name: 'editGame', params: { id: props.game.bggId } })
+  router.push({ name: 'viewGame', params: { id: props.game.bggId } })
 }
 </script>
 

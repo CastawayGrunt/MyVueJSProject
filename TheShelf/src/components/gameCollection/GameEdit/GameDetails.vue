@@ -22,7 +22,14 @@
             >
               <div class="dropdown-header">Options:</div>
               <button class="dropdown-item">Edit Game</button>
-              <button class="dropdown-item" @click.prevent="$emit('logPlay')">Log Play</button>
+              <button
+                class="dropdown-item"
+                data-toggle="modal"
+                data-target="#addGamePlayModal"
+                @click.prevent="showLogPlay()"
+              >
+                Log Play
+              </button>
               <!-- <div class="dropdown-divider"></div>
               <button
                 class="dropdown-item text-danger"
@@ -112,29 +119,52 @@
               </div>
             </form>
             <LabelText label="Comment" :text="`${userGameInfo.comment}`" />
-            <LabelText label="Plays" :text="`${userGameInfo.plays}`" />
+            <div class="d-flex align-items-center">
+              <LabelText label="Plays" text="" />
+              <button
+                data-toggle="modal"
+                data-target="#addGamePlayModal"
+                class="btn btn-outline-primary btn-sm mb-2 ml-2"
+                type="submit"
+                @click.prevent="showLogPlay()"
+              >
+                Log Play
+              </button>
+            </div>
+            <div v-if="userPlays.length > 0">
+              <PlaysTable :userPlays="userPlays" />
+            </div>
           </div>
         </div>
       </div>
     </div>
+    <PlaysFormModal
+      :game="userGameInfo"
+      :showAddPlayModal="logGameModalVisible"
+      @cancelAddPlay="hideLogPlay()"
+    />
   </div>
 </template>
 
 <script lang="ts" setup>
 import LabelText from '@/components/gameCollection/LabelText.vue'
 import GameRating from '@/components/gameCollection/GameView/GameRating.vue'
+import PlaysTable from './PlaysTable.vue'
+import PlaysFormModal from './PlaysFormModal.vue'
 import { type GameType } from '@/services/fireGameData'
 import { ref, onMounted, watch } from 'vue'
-import type { GameCollection } from '@/services/fireUserData'
+import type { GameCollection, Plays } from '@/services/fireUserData'
 import { useUserStore } from '@/stores/user'
 
 const props = defineProps<{
   game: GameType
   userGameInfo: GameCollection
+  userPlays: Plays[]
 }>()
 
 const userRating = ref(0)
 const ratingChanged = ref(true)
+const logGameModalVisible = ref(false)
 
 watch(
   () => userRating.value,
@@ -183,6 +213,13 @@ onMounted(() => {
 // const hideRemoveGameModal = () => {
 //   removeGameModalVisible.value = false
 // }
+const showLogPlay = () => {
+  logGameModalVisible.value = true
+}
+
+const hideLogPlay = () => {
+  logGameModalVisible.value = false
+}
 </script>
 
 <style scoped>

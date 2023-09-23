@@ -19,6 +19,7 @@ const router = createRouter({
       name: 'home',
       component: HomeView,
       meta: {
+        title: 'Home',
         auth: false,
         frame: false
       }
@@ -28,6 +29,7 @@ const router = createRouter({
       name: 'login',
       component: LoginView,
       meta: {
+        title: 'Login',
         auth: false,
         frame: false
       }
@@ -37,6 +39,7 @@ const router = createRouter({
       name: 'register',
       component: RegisterView,
       meta: {
+        title: 'Register',
         auth: false,
         frame: false
       }
@@ -46,6 +49,7 @@ const router = createRouter({
       name: 'forgotpassword',
       component: ForgotPasswordView,
       meta: {
+        title: 'Forgot Password',
         auth: false,
         frame: false
       }
@@ -55,6 +59,7 @@ const router = createRouter({
       name: 'dashboard',
       component: DashboardView,
       meta: {
+        title: 'Dashboard',
         auth: true,
         frame: true
       }
@@ -73,16 +78,18 @@ const router = createRouter({
           name: 'addGame',
           component: () => import('@/views/Collection/CollectionAddGameView.vue'),
           meta: {
+            title: 'Add Game',
             auth: true,
             frame: true
           }
         },
         {
-          path: 'edit-game/:id',
-          name: 'editGame',
-          component: () => import('@/views/Collection/CollectionEditGameView.vue'),
+          path: 'view-game/:id',
+          name: 'viewGame',
+          component: () => import('@/views/Collection/CollectionViewGameView.vue'),
           props: true,
           meta: {
+            title: 'View Game',
             auth: true,
             frame: true
           }
@@ -92,6 +99,7 @@ const router = createRouter({
           name: 'games',
           component: () => import('@/views/Collection/CollectionGamesView.vue'),
           meta: {
+            title: 'Collection',
             auth: true,
             frame: true
           }
@@ -103,6 +111,7 @@ const router = createRouter({
       name: 'profile',
       component: ProfileView,
       meta: {
+        title: 'Profile',
         auth: true,
         frame: true
       }
@@ -112,6 +121,7 @@ const router = createRouter({
       name: 'not-found',
       component: PageNotFoundView,
       meta: {
+        title: 'Page Not Found',
         auth: false,
         frame: false
       }
@@ -119,20 +129,26 @@ const router = createRouter({
   ]
 })
 
-router.beforeEach(async (to, from) => {
+router.beforeEach(async (to, from, next) => {
+  const title = to.meta.title as string
+  if (title) {
+    document.title = `The Shelf - ${title}`
+  }
   const userStore = useUserStore()
   if (to.path === '/' && userStore.isAuthenticated) {
-    return { name: 'dashboard' }
+    return { name: 'dashboard', replace: true }
   }
-  // if (to.path === '/collection' && userStore.isAuthenticated) {
-  //   return { name: 'games' }
-  // }
+  if (to.path === '/collection' || (to.path === '/collection/' && userStore.isAuthenticated)) {
+    console.log('collection')
+    return { name: 'games', replace: true }
+  }
   if (to.meta.auth && !userStore.isAuthenticated) {
-    return { name: 'login' }
+    return { name: 'login', replace: true }
   }
   if (from === START_LOCATION && userStore.isAuthenticated) {
     await useUserStore().getGames()
   }
+  next()
 })
 
 export default router

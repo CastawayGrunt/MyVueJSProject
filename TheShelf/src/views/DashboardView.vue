@@ -13,7 +13,7 @@
                 Games Owned
               </div>
               <div class="h5 mb-0 font-weight-bold text-gray-800">
-                {{ gamesSummary.gamesOwned }}
+                {{ gamesSummary.gamesOwned() }}
               </div>
             </div>
             <div class="col-auto">
@@ -58,7 +58,11 @@
                 <div class="col-auto">
                   <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">
                     {{ gamesSummary.mostPlayedGame().mostPlayedGameName }}
-                    {{ gamesSummary.mostPlayedGame().mostPlayedGamePlays }}
+                    {{
+                      gamesSummary.mostPlayedGame().mostPlayedGamePlays === 0
+                        ? ''
+                        : ` - ${gamesSummary.mostPlayedGame().mostPlayedGamePlays}`
+                    }}
                   </div>
                 </div>
               </div>
@@ -83,7 +87,7 @@
                 Games Played
               </div>
               <div class="h5 mb-0 font-weight-bold text-gray-800">
-                {{ gamesSummary.gamesPlayed }}
+                {{ gamesSummary.gamesPlayed() }}
               </div>
             </div>
             <div class="col-auto">
@@ -122,24 +126,34 @@ import { useUserStore } from '@/stores/user'
 import { computed } from 'vue'
 
 const user = useUserStore().user
+const games = useUserStore().games
 
 const gamesSummary = computed(() => {
-  const gamesOwned = user?.games.length
-
-  const gamesPlayed = user?.games.filter((game) => game.plays.length > 0).length
+  const gamesOwned = () => {
+    if (user?.games && user?.games.length > 0) {
+      return user?.games.length
+    } else {
+      return 0
+    }
+  }
+  const gamesPlayed = () => {
+    if (user?.plays.length) {
+      return user?.plays.length
+    } else {
+      return 0
+    }
+  }
 
   const mostPlayedGame = () => {
-    const mostPlayedGame = user?.games
-      .sort((a, b) => b.plays.length - a.plays.length)
-      .slice(0, 1)[0]
+    let mostPlayedGameName = 'No games played yet'
+    let mostPlayedGamePlays = 0
 
-    let mostPlayedGameName = ''
-    if (mostPlayedGame?.plays.length === 0) {
-      mostPlayedGameName = 'No games played yet'
-    }
-    let mostPlayedGamePlays = mostPlayedGame?.plays.length
-    if (!mostPlayedGamePlays) {
-      mostPlayedGamePlays = undefined
+    if (user?.mostPlayed) {
+      mostPlayedGameName = user?.mostPlayed
+
+      const mostPlayedGameId = games?.find((game) => game.name === mostPlayedGameName)?.bggId
+      mostPlayedGamePlays = user?.plays.filter((play) => play.gameId === mostPlayedGameId).length
+      return { mostPlayedGameName, mostPlayedGamePlays }
     }
     return { mostPlayedGameName, mostPlayedGamePlays }
   }

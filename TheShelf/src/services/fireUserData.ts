@@ -6,7 +6,8 @@ import {
   setDoc,
   updateDoc,
   deleteDoc,
-  arrayRemove
+  arrayRemove,
+  FieldValue
 } from 'firebase/firestore'
 
 export type FireUser = {
@@ -14,23 +15,30 @@ export type FireUser = {
   displayName: string
   email: string
   photoURL: string
-  dateCreated: string
+  dateCreated?: FieldValue
   games: GameCollection[]
+  plays: Plays[]
   lastPlayed: string
   mostPlayed: string
 }
 
-type Plays = {
-  date: string
+export type Plays = {
+  timestamp?: Date
+  gameId: string
+  datePlayed: string
   location: string
-  players: string[]
-  winner: string
+  players: Players[]
+}
+
+export type Players = {
+  name: string
+  score: number
+  winner?: boolean
 }
 
 export type GameCollection = {
   gameId: string
   name: string
-  plays: Plays[]
   rating: number
   comment: string
 }
@@ -85,6 +93,26 @@ export async function addFireUserGame(user: FireUser, game: GameCollection) {
 
   await updateDoc(userRef, {
     games: arrayUnion(game)
+  })
+}
+
+export async function addFireUserGamePlay(user: FireUser, game: GameCollection, play: Plays) {
+  const db = useFirestore()
+  const userRef = doc(db, 'users', user.id)
+  const userSnap = await getDoc(userRef)
+
+  if (!userSnap.exists()) {
+    throw new Error('User does not exist')
+  }
+
+  if (!user.games.find((g) => g.gameId === game.gameId)) {
+    throw new Error('Game does not exist')
+  }
+  console.log(play)
+  await updateDoc(userRef, {
+    plays: arrayUnion(play),
+    lastPlayed: game.name,
+    mostPlayed: game.name
   })
 }
 

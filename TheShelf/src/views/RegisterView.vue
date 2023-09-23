@@ -125,10 +125,10 @@ const registerUserClicked = async () => {
   const user: FireUser = {
     id: '',
     email: email.value,
-    photoURL: '/assets/img/undraw_default_avatar.png',
+    photoURL: '/assets/img/undraw_default_avatar.svg',
     displayName: `${firstName.value} ${lastName.value}`,
     games: [],
-    dateCreated: new Date().toISOString(),
+    plays: [],
     lastPlayed: '',
     mostPlayed: ''
   }

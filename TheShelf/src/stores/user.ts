@@ -14,7 +14,9 @@ import {
   getFireUser,
   addFireUserGame,
   deleteFireUserGame,
-  updateFireUser
+  updateFireUser,
+  type Plays,
+  addFireUserGamePlay
 } from '@/services/fireUserData'
 import type { GameIdResponse } from '@/services/boardGamesApi'
 import {
@@ -25,14 +27,16 @@ import {
 } from '@/services/fireGameData'
 import { useStorage } from '@vueuse/core'
 import { deleteUserImage, uploadUserImage } from '@/services/fireFileBucket'
+import { serverTimestamp } from 'firebase/firestore'
 
 const defaultUserLocal: FireUser = {
   id: '',
   displayName: '',
   email: '',
   photoURL: '',
-  dateCreated: '',
+  dateCreated: serverTimestamp(),
   games: [],
+  plays: [],
   lastPlayed: '',
   mostPlayed: ''
 }
@@ -64,8 +68,10 @@ export const useUserStore = defineStore('user', {
       if (this.user) {
         return
       }
+      if (userLocalStorage.value.id === '' || userLocalStorage === null) {
+        return
+      }
       this.user = userLocalStorage.value
-      console.log('init', this.user)
     },
     async login({ email, password }: Credentials) {
       userLocalStorage.value = null
@@ -81,6 +87,7 @@ export const useUserStore = defineStore('user', {
           photoURL: userData.photoURL,
           dateCreated: userData.dateCreated,
           games: userData.games,
+          plays: userData.plays,
           lastPlayed: userData.lastPlayed,
           mostPlayed: userData.mostPlayed
         }
@@ -107,11 +114,13 @@ export const useUserStore = defineStore('user', {
           email: user.email,
           photoURL: user.photoURL,
           games: user.games,
-          dateCreated: user.dateCreated,
+          plays: user.plays,
+          dateCreated: serverTimestamp(),
           lastPlayed: user.lastPlayed,
           mostPlayed: user.mostPlayed
         }
         await addFireUser(userData)
+        userLocalStorage.value = userData
 
         if (registeredUser.displayName != null && registeredUser.email != null) {
           return (this.user = userData)
@@ -198,7 +207,6 @@ export const useUserStore = defineStore('user', {
         const mappedGame: GameCollection = {
           gameId: newGame.bggId,
           name: newGame.name,
-          plays: [],
           rating: NaN,
           comment: ''
         }
@@ -209,6 +217,27 @@ export const useUserStore = defineStore('user', {
         this.games?.push(gameData)
         this.user.games.push(mappedGame)
         return
+      }
+    },
+    async addGamePlay(game: GameCollection, play: Plays) {
+      if (this.user) {
+        const gameIndex = this.user.games.findIndex((g) => g.gameId === game.gameId)
+
+        if (gameIndex === -1) {
+          return false
+        }
+        if (gameIndex > -1) {
+          const mapPlay: Plays = {
+            timestamp: new Date(),
+            gameId: play.gameId,
+            datePlayed: play.datePlayed,
+            location: play.location,
+            players: play.players
+          }
+          await addFireUserGamePlay(this.user, game, mapPlay)
+          this.user.plays.push(play)
+          return true
+        }
       }
     },
     async updateGameRating(game: GameType, rating: number) {
@@ -231,7 +260,7 @@ export const useUserStore = defineStore('user', {
           this.games[index] = updatedGame
         }
       }
-      if (currentRating !== null && currentRating && currentRating >= 1 && currentRating <= 5) {
+      if (currentRating && currentRating >= 1 && currentRating <= 5) {
         await changeFireGameRating(game, currentRating, false)
         const gameNewRating = await changeFireGameRating(game, rating, true)
         const index = this.games.findIndex((g) => g.bggId === game.bggId)
