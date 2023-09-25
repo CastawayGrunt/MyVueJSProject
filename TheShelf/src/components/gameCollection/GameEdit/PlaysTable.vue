@@ -10,7 +10,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="play in userPlaysDisplay" :key="play.timestamp?.toDateString()">
+        <tr v-for="play in userPlays" :key="play.dataAdded?.toString()">
           <th scope="row" v-html="play.datePlayed"></th>
           <td>{{ play.location }}</td>
 
@@ -36,10 +36,10 @@
             <button
               class="btn btn-outline-danger btn-sm"
               data-toggle="modal"
-              data-target="#addGameModal"
-              @click="$emit('openDeleteGamePlayModal', play.timestamp)"
+              data-target="#removePlayModal"
+              @click="$emit('openRemoveGamePlayModal', play)"
             >
-              Delete
+              Remove
             </button>
           </td>
         </tr>
@@ -50,28 +50,10 @@
 
 <script lang="ts" setup>
 import type { Plays } from '@/services/fireUserData'
-import { watch, ref, onMounted } from 'vue'
 
-const userPlaysDisplay = ref([] as Plays[])
-
-const props = defineProps<{
+defineProps<{
   userPlays: Plays[]
 }>()
-
-watch(
-  () => props.userPlays,
-  (plays) => {
-    if (plays !== null || plays !== undefined) {
-      userPlaysDisplay.value = plays
-      console.log(userPlaysDisplay.value)
-    }
-  }
-)
-
-onMounted(() => {
-  userPlaysDisplay.value = props.userPlays
-  console.log('3', userPlaysDisplay.value)
-})
 </script>
 
 <style scoped></style>

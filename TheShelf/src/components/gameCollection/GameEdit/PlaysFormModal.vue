@@ -1,6 +1,5 @@
 <template>
   <div
-    v-if="showAddPlayModal"
     class="modal fade"
     id="addGamePlayModal"
     tabindex="-1"
@@ -44,31 +43,36 @@
               />
             </div>
             <div v-for="player in play.players" :key="player.name">
+              <hr />
               <div class="form-group">
                 <input
                   type="text"
                   class="form-control form-control-user"
                   :id="`name ${player.name}`"
-                  placeholder="name"
+                  placeholder="Player Name"
                   v-model="player.name"
                 />
+              </div>
+              <div class="form-group">
                 <input
-                  type="text"
+                  type="number"
                   class="form-control form-control-user"
                   :id="`playerScore ${player.name}`"
-                  placeholder="Location"
+                  placeholder="Score"
                   v-model="player.score"
                 />
-                <div class="custom-control custom-checkbox small">
-                  <input
-                    type="checkbox"
-                    class="custom-control-input"
-                    :id="`winner ${player.name}`"
-                    v-model="player.winner"
-                  />
-                  <label class="custom-control-label" :for="`winner ${player.name}`">Winner</label>
-                </div>
               </div>
+              <div class="custom-control custom-checkbox small form-group">
+                <input
+                  type="checkbox"
+                  class="custom-control-input"
+                  :id="`winner ${player.name}`"
+                  v-model="player.winner"
+                />
+                <label class="custom-control-label" :for="`winner ${player.name}`">Winner</label>
+              </div>
+
+              <!-- </div> -->
             </div>
             <button
               type="button"
@@ -84,7 +88,7 @@
             type="button"
             class="btn btn-secondary"
             data-dismiss="modal"
-            @click.prevent="$emit('cancelAddPlay')"
+            @click.prevent="$emit('cancelAddPlay', resetPlayRef())"
           >
             Close
           </button>
@@ -116,14 +120,13 @@ const play = ref<Plays>({
 })
 
 const props = defineProps<{
-  showAddPlayModal: boolean
   game: GameCollection
 }>()
 
 const addPlayer = () => {
   play.value.players.push({
     name: '',
-    score: 0,
+    score: NaN,
     winner: false
   })
 }
@@ -135,7 +138,16 @@ const submitPlay = async (play: Plays) => {
 
   const playAdded = await userStore.addGamePlay(props.game, play)
   if (playAdded) {
-    console.log('play added')
+    resetPlayRef()
+  }
+}
+
+const resetPlayRef = () => {
+  play.value = {
+    gameId: '',
+    datePlayed: '',
+    location: '',
+    players: []
   }
 }
 </script>

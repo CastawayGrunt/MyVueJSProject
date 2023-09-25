@@ -23,7 +23,7 @@ export type FireUser = {
 }
 
 export type Plays = {
-  timestamp?: Date
+  dataAdded?: Date
   gameId: string
   datePlayed: string
   location: string
@@ -33,7 +33,7 @@ export type Plays = {
 export type Players = {
   name: string
   score: number
-  winner?: boolean
+  winner: boolean
 }
 
 export type GameCollection = {
@@ -108,11 +108,25 @@ export async function addFireUserGamePlay(user: FireUser, game: GameCollection, 
   if (!user.games.find((g) => g.gameId === game.gameId)) {
     throw new Error('Game does not exist')
   }
-  console.log(play)
+
   await updateDoc(userRef, {
     plays: arrayUnion(play),
     lastPlayed: game.name,
     mostPlayed: game.name
+  })
+}
+
+export async function deleteFireUserGamePlay(user: FireUser, play: Plays) {
+  const db = useFirestore()
+  const userRef = doc(db, 'users', user.id)
+  const userSnap = await getDoc(userRef)
+
+  if (!userSnap.exists()) {
+    throw new Error('User does not exist')
+  }
+
+  await updateDoc(userRef, {
+    plays: arrayRemove(play)
   })
 }
 

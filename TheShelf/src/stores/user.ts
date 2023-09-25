@@ -16,7 +16,8 @@ import {
   deleteFireUserGame,
   updateFireUser,
   type Plays,
-  addFireUserGamePlay
+  addFireUserGamePlay,
+  deleteFireUserGamePlay
 } from '@/services/fireUserData'
 import type { GameIdResponse } from '@/services/boardGamesApi'
 import {
@@ -228,7 +229,7 @@ export const useUserStore = defineStore('user', {
         }
         if (gameIndex > -1) {
           const mapPlay: Plays = {
-            timestamp: new Date(),
+            dataAdded: new Date(),
             gameId: play.gameId,
             datePlayed: play.datePlayed,
             location: play.location,
@@ -240,47 +241,55 @@ export const useUserStore = defineStore('user', {
         }
       }
     },
+    async deleteGamePlay(play: Plays) {
+      if (this.user) {
+        const playIndex = this.user.plays.findIndex((g) => g.dataAdded === play.dataAdded)
+        const playToRemove = this.user.plays[playIndex]
+
+        if (playIndex === -1) {
+          return false
+        }
+        if (playIndex > -1) {
+          await deleteFireUserGamePlay(this.user, playToRemove)
+          this.user.plays.splice(playIndex, 1)
+          return true
+        }
+      }
+    },
     async updateGameRating(game: GameType, rating: number) {
       if (!this.games || !this.user) {
         return false
       }
 
-      const gameToUpdate = this.user?.games.find((g) => g.gameId === game.bggId)
+      const userGameToUpdate = this.user?.games.find((g) => g.gameId === game.bggId)
       const currentRating = this.user?.games.find((g) => g.gameId === game.bggId)?.rating
 
-      if (gameToUpdate) {
-        gameToUpdate.rating = rating
+      if (userGameToUpdate) {
+        userGameToUpdate.rating = rating
         await updateFireUser(this.user)
       }
 
       if (currentRating === null) {
-        const updatedGame = await changeFireGameRating(game, rating, true)
+        await changeFireGameRating(game, rating, true)
+        const updatedGame = await this.getGame(game.bggId)
         const index = this.games.findIndex((g) => g.bggId === game.bggId)
         if (index >= 0) {
           this.games[index] = updatedGame
         }
       }
+
       if (currentRating && currentRating >= 1 && currentRating <= 5) {
         await changeFireGameRating(game, currentRating, false)
-        const gameNewRating = await changeFireGameRating(game, rating, true)
+        await changeFireGameRating(game, rating, true)
+
+        const updatedGame = await this.getGame(game.bggId)
         const index = this.games.findIndex((g) => g.bggId === game.bggId)
         if (index >= 0) {
-          this.games[index] = gameNewRating
+          this.games[index] = updatedGame
         }
       }
       return true
     },
-    // async updateUserGameRating(game: GameType, rating: number) {
-    //   if (!this.games) {
-    //     return false
-    //   }
-    //   const updatedGame = await updateFireUser(game, rating)
-    //   const index = this.games.findIndex((g) => g.bggId === game.bggId)
-    //   if (index >= 0) {
-    //     this.games[index] = updatedGame
-    //   }
-    //   return true
-    // },
     async deleteUserGame(game: GameType) {
       if (this.user) {
         const gameIndex = this.user.games.findIndex((g) => g.gameId === game.bggId)

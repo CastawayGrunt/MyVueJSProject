@@ -104,8 +104,6 @@ export async function changeFireGameRating(game: GameType, rating: number, plusO
       'rating.5star': increment(incrementValue)
     })
   }
-
-  return game
 }
 // export async function deleteFireGame(game: GameType) {
 //   const db = useFirestore()

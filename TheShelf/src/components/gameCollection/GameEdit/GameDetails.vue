@@ -132,16 +132,25 @@
               </button>
             </div>
             <div v-if="userPlays.length > 0">
-              <PlaysTable :userPlays="userPlays" />
+              <PlaysTable
+                :userPlays="userPlays"
+                @openRemoveGamePlayModal="openRemoveGamePlayModal"
+              />
             </div>
           </div>
         </div>
       </div>
     </div>
     <PlaysFormModal
+      v-if="logGameModalVisible"
       :game="userGameInfo"
-      :showAddPlayModal="logGameModalVisible"
       @cancelAddPlay="hideLogPlay()"
+    />
+    <RemovePlayModal
+      v-if="activePlay"
+      :play="activePlay"
+      @cancelRemovePlay="resetActivePlay"
+      @removePlay="removePlay"
     />
   </div>
 </template>
@@ -151,10 +160,13 @@ import LabelText from '@/components/gameCollection/LabelText.vue'
 import GameRating from '@/components/gameCollection/GameView/GameRating.vue'
 import PlaysTable from './PlaysTable.vue'
 import PlaysFormModal from './PlaysFormModal.vue'
+import RemovePlayModal from './RemovePlayModal.vue'
 import { type GameType } from '@/services/fireGameData'
 import { ref, onMounted, watch } from 'vue'
 import type { GameCollection, Plays } from '@/services/fireUserData'
 import { useUserStore } from '@/stores/user'
+
+const userStore = useUserStore()
 
 const props = defineProps<{
   game: GameType
@@ -165,15 +177,15 @@ const props = defineProps<{
 const userRating = ref(0)
 const ratingChanged = ref(true)
 const logGameModalVisible = ref(false)
+const activePlay = ref(null as Plays | null)
 
 watch(
   () => userRating.value,
   (userRating) => {
     if (userRating === props.userGameInfo.rating) {
-      ratingChanged.value = false
-      return
+      return (ratingChanged.value = false)
     }
-    ratingChanged.value = true
+    return (ratingChanged.value = true)
   }
 )
 
@@ -181,20 +193,32 @@ watch(
   () => props.userGameInfo,
   (userGameInfo) => {
     if (userGameInfo !== null || userGameInfo !== undefined) {
-      userRating.value = userGameInfo.rating
+      return (userRating.value = userGameInfo.rating)
     }
   }
 )
 
 const submitRating = async (newRating: number) => {
-  const ratingSuccuess = await useUserStore().updateGameRating(props.game, newRating)
+  const ratingSuccuess = await userStore.updateGameRating(props.game, newRating)
   if (ratingSuccuess === false) {
     return
   }
   userRating.value = newRating
 
-  ratingChanged.value = false
   return (ratingChanged.value = false)
+}
+
+const openRemoveGamePlayModal = (play: Plays) => {
+  activePlay.value = play
+}
+
+const removePlay = (play: Plays) => {
+  userStore.deleteGamePlay(play)
+  resetActivePlay()
+}
+
+const resetActivePlay = () => {
+  activePlay.value = null
 }
 
 onMounted(() => {
