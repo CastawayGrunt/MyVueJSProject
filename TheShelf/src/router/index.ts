@@ -139,7 +139,6 @@ router.beforeEach(async (to, from, next) => {
     return { name: 'dashboard', replace: true }
   }
   if (to.path === '/collection' || (to.path === '/collection/' && userStore.isAuthenticated)) {
-    console.log('collection')
     return { name: 'games', replace: true }
   }
   if (to.meta.auth && !userStore.isAuthenticated) {

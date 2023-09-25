@@ -32,7 +32,7 @@
   <AddGameModal
     v-if="activeGame"
     :game="activeGame"
-    @cancelAddGame="cancelAdd"
+    @cancelAddGame="resetActiveGame"
     @addGame="addGame"
   />
 </template>
@@ -132,7 +132,7 @@ const updatePage = () => {
 
 const searchGameById = async (query: number) => {
   if (query.toString().trim() === '') {
-    return (activeGame.value = {} as GameIdResponse)
+    return resetActiveGame()
   }
 
   loadingGameStatus.value = loadingGameEnum.resultsLoading
@@ -151,7 +151,7 @@ const openAddGameModal = async (gameId: number) => {
   return gameToAdd
 }
 
-const cancelAdd = () => {
+const resetActiveGame = () => {
   activeGame.value = {} as GameIdResponse
 }
 
@@ -160,7 +160,7 @@ const addGame = async (game: GameIdResponse) => {
 
   await userStore.addGame(game)
 
-  activeGame.value = {} as GameIdResponse
+  resetActiveGame()
 }
 </script>
 
