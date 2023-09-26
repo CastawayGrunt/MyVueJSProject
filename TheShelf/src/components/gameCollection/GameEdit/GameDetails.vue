@@ -21,7 +21,14 @@
               aria-labelledby="dropdownMenuLink"
             >
               <div class="dropdown-header">Options:</div>
-              <button class="dropdown-item">Edit Game</button>
+              <button
+                class="dropdown-item"
+                data-toggle="modal"
+                data-target="#addCommentModal"
+                @click.prevent="showAddComment()"
+              >
+                {{ commentButtonText }}
+              </button>
               <button
                 class="dropdown-item"
                 data-toggle="modal"
@@ -118,7 +125,18 @@
                 </button>
               </div>
             </form>
-            <LabelText label="Comment" :text="`${userGameInfo.comment}`" />
+            <div class="d-flex align-items-center">
+              <LabelText label="Comment" :text="`${userGameInfo.comment}`" />
+              <button
+                data-toggle="modal"
+                data-target="#addCommentModal"
+                class="btn btn-outline-primary btn-sm mb-2 ml-2"
+                type="submit"
+                @click.prevent="showAddComment()"
+              >
+                {{ commentButtonText }}
+              </button>
+            </div>
             <div class="d-flex align-items-center">
               <LabelText label="Plays" text="" />
               <button
@@ -141,16 +159,17 @@
         </div>
       </div>
     </div>
-    <PlaysFormModal
-      v-if="logGameModalVisible"
-      :game="userGameInfo"
-      @cancelAddPlay="hideLogPlay()"
-    />
+    <PlaysFormModal v-if="logGameModalVisible" :game="userGameInfo" @cancelAddPlay="hideLogPlay" />
     <RemovePlayModal
       v-if="activePlay"
       :play="activePlay"
       @cancelRemovePlay="resetActivePlay"
       @removePlay="removePlay"
+    />
+    <CommentModal
+      v-if="commentModalVisible"
+      :game="userGameInfo"
+      @cancelAddComment="hideAddComment"
     />
   </div>
 </template>
@@ -158,6 +177,7 @@
 <script lang="ts" setup>
 import LabelText from '@/components/gameCollection/LabelText.vue'
 import GameRating from '@/components/gameCollection/GameView/GameRating.vue'
+import CommentModal from '@/components/gameCollection/GameEdit/CommentModal.vue'
 import PlaysTable from './PlaysTable.vue'
 import PlaysFormModal from './PlaysFormModal.vue'
 import RemovePlayModal from './RemovePlayModal.vue'
@@ -177,7 +197,16 @@ const props = defineProps<{
 const userRating = ref(0)
 const ratingChanged = ref(true)
 const logGameModalVisible = ref(false)
+const commentModalVisible = ref(false)
+const commentButtonText = ref('')
 const activePlay = ref(null as Plays | null)
+
+watch(
+  () => props.userGameInfo.comment,
+  (comment) => {
+    setCommentButtonText(comment)
+  }
+)
 
 watch(
   () => userRating.value,
@@ -221,12 +250,21 @@ const resetActivePlay = () => {
   activePlay.value = null
 }
 
+const setCommentButtonText = (comment: string) => {
+  if (comment === undefined || comment === null || comment === '') {
+    return (commentButtonText.value = 'Add Comment')
+  }
+  return (commentButtonText.value = 'Edit Comment')
+}
+
 onMounted(() => {
   if (props.userGameInfo.rating === undefined) {
     userRating.value = 0
   } else {
     userRating.value = props.userGameInfo.rating
   }
+
+  setCommentButtonText(props.userGameInfo.comment)
 })
 
 // const removeGameModalVisible = ref(false)
@@ -243,6 +281,13 @@ const showLogPlay = () => {
 
 const hideLogPlay = () => {
   logGameModalVisible.value = false
+}
+const showAddComment = () => {
+  commentModalVisible.value = true
+}
+
+const hideAddComment = () => {
+  commentModalVisible.value = false
 }
 </script>
 

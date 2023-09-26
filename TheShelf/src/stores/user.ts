@@ -290,6 +290,19 @@ export const useUserStore = defineStore('user', {
       }
       return true
     },
+    async updateGameComment(game: GameCollection, comment: string) {
+      if (!this.games || !this.user) {
+        return false
+      }
+
+      const userGameToUpdate = this.user?.games.find((g) => g.gameId === game.gameId)
+
+      if (userGameToUpdate) {
+        userGameToUpdate.comment = comment
+        await updateFireUser(this.user)
+      }
+      return true
+    },
     async deleteUserGame(game: GameType) {
       if (this.user) {
         const gameIndex = this.user.games.findIndex((g) => g.gameId === game.bggId)

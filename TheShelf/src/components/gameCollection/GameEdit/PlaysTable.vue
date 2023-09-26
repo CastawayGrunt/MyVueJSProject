@@ -41,7 +41,7 @@
               data-target="#removePlayModal"
               @click="$emit('openRemoveGamePlayModal', play, updatePage)"
             >
-              Remove
+              <i class="fas fa-trash"></i>
             </button>
           </td>
         </tr>
