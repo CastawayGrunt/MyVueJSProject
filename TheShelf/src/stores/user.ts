@@ -235,8 +235,15 @@ export const useUserStore = defineStore('user', {
             location: play.location,
             players: play.players
           }
-          await addFireUserGamePlay(this.user, game, mapPlay)
+          const gameName = this.user.games[gameIndex].name
+
+          const updateStats = await addFireUserGamePlay(this.user, game, mapPlay)
+
+          if (updateStats.mostPlayedGameName !== this.user.mostPlayed) {
+            this.user.mostPlayed = updateStats.mostPlayedGameName
+          }
           this.user.plays.push(play)
+          this.user.lastPlayed = gameName
           return true
         }
       }

@@ -109,11 +109,44 @@ export async function addFireUserGamePlay(user: FireUser, game: GameCollection, 
     throw new Error('Game does not exist')
   }
 
+  if (user.mostPlayed !== game.name) {
+    const mostPlayedGameName = findMostPlayedGame(user)
+
+    await updateDoc(userRef, {
+      plays: arrayUnion(play),
+      lastPlayed: game.name,
+      mostPlayed: mostPlayedGameName
+    })
+
+    return { mostPlayedGameName }
+  }
+
   await updateDoc(userRef, {
     plays: arrayUnion(play),
-    lastPlayed: game.name,
-    mostPlayed: game.name
+    lastPlayed: game.name
   })
+
+  return { mostPlayedGameName: user.mostPlayed }
+}
+
+function findMostPlayedGame(user: FireUser) {
+  //found here https://stackoverflow.com/questions/6120931/how-to-count-certain-elements-in-array
+  type countPlays = {
+    [key: string]: number
+  }
+  const counts: countPlays = {}
+  user.plays.forEach((el) => {
+    counts[el.gameId] = counts[el.gameId] ? counts[el.gameId] + 1 : 1
+  })
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const countsSorted = Object.entries(counts).sort(([_, a], [__, b]) => a - b)
+  const mostPlayedId = countsSorted[countsSorted.length - 1][0]
+  const mostPlayedGameName = user.games.find((g) => g.gameId === mostPlayedId)?.name
+
+  if (mostPlayedGameName) {
+    return mostPlayedGameName
+  }
+  return ''
 }
 
 export async function deleteFireUserGamePlay(user: FireUser, play: Plays) {
