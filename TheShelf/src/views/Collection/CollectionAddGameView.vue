@@ -63,8 +63,9 @@ const currentPage = ref(1)
 const firstPage = ref(true)
 const lastPage = ref(false)
 
+const gameSearchStore = useGameSearchStore()
+
 const searchTitle = async (query: string) => {
-  const gameSearchStore = useGameSearchStore()
   if (query === '') {
     loadingGamesStatus.value = loadingGamesEnum.init
     return (results.value = [])
@@ -123,7 +124,7 @@ const updatePage = () => {
   firstPage.value = currentPage.value == 1
   lastPage.value = currentPage.value == pages.value
 
-  const searchResults = useGameSearchStore().getPage(currentPage.value)
+  const searchResults = gameSearchStore.getPage(currentPage.value)
   if (searchResults === undefined || searchResults.page.length === 0) {
     return
   }

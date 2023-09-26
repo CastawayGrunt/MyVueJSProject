@@ -148,7 +148,7 @@ export const useUserStore = defineStore('user', {
       return url
     },
     async removeProfilePicture() {
-      const placeholderImg = '/img/undraw_profile.svg'
+      const placeholderImg = '/img/undraw_default_avatar.svg'
       if (this.user?.photoURL.includes(placeholderImg)) {
         return true
       }
