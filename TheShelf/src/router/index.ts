@@ -7,6 +7,7 @@ import CollectionView from '@/views/CollectionView.vue'
 import PageNotFoundView from '@/views/PageNotFoundView.vue'
 import ProfileView from '@/views/ProfileView.vue'
 import ForgotPasswordView from '@/views/ForgotPasswordView.vue'
+import AboutView from '@/views/AboutView.vue'
 
 import { useUserStore } from '@/stores/user'
 
@@ -20,6 +21,16 @@ const router = createRouter({
       component: HomeView,
       meta: {
         title: 'Home',
+        auth: false,
+        frame: false
+      }
+    },
+    {
+      path: '/about',
+      name: 'about',
+      component: AboutView,
+      meta: {
+        title: 'About',
         auth: false,
         frame: false
       }
