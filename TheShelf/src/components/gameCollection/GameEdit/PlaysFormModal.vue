@@ -30,7 +30,7 @@
                 class="form-control form-control-user"
                 id="datePlayed"
                 placeholder="Date Played"
-                v-model="play.datePlayed"
+                v-model="newPlay.datePlayed"
               />
             </div>
             <div class="form-group">
@@ -39,10 +39,10 @@
                 class="form-control form-control-user"
                 id="location"
                 placeholder="Location"
-                v-model="play.location"
+                v-model="newPlay.location"
               />
             </div>
-            <div v-for="player in play.players" :key="player.name">
+            <div v-for="player in newPlay.players" :key="player.name">
               <hr />
               <div class="form-group">
                 <input
@@ -71,8 +71,6 @@
                 />
                 <label class="custom-control-label" :for="`winner ${player.name}`">Winner</label>
               </div>
-
-              <!-- </div> -->
             </div>
             <button
               type="button"
@@ -96,7 +94,7 @@
             type="button"
             class="btn btn-primary"
             data-dismiss="modal"
-            @click.prevent="submitPlay(play)"
+            @click.prevent="onPlaySubmit(newPlay)"
           >
             Save play
           </button>
@@ -112,7 +110,7 @@ import type { GameCollection, Plays } from '@/services/fireUserData'
 import { useUserStore } from '@/stores/user'
 
 const userStore = useUserStore()
-const play = ref<Plays>({
+const newPlay = ref<Plays>({
   gameId: '',
   datePlayed: '',
   location: '',
@@ -124,15 +122,14 @@ const props = defineProps<{
 }>()
 
 const addPlayer = () => {
-  play.value.players.push({
+  newPlay.value.players.push({
     name: '',
     score: NaN,
     winner: false
   })
 }
 
-const submitPlay = async (play: Plays) => {
-  console.log('submitPlay', play)
+const onPlaySubmit = async (play: Plays) => {
   const gameid = props.game.gameId
   play.gameId = gameid
 
@@ -143,7 +140,7 @@ const submitPlay = async (play: Plays) => {
 }
 
 const resetPlayRef = () => {
-  play.value = {
+  newPlay.value = {
     gameId: '',
     datePlayed: '',
     location: '',
