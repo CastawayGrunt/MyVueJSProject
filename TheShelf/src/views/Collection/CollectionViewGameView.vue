@@ -22,7 +22,7 @@ const props = defineProps<{
 if (userStore.user?.plays) {
   watchArray(userStore.user?.plays, (newPlays, oldPlays) => {
     if (newPlays !== oldPlays || newPlays !== undefined) {
-      userPlays.value = newPlays
+      findGamePlays()
     }
   })
 }
@@ -43,18 +43,25 @@ const findGame = () => {
   return (game.value = gameData)
 }
 
+const findGamePlays = () => {
+  const playsData = userStore.user?.plays?.filter((play) => play.gameId === props.id)
+  if (playsData === undefined) {
+    return (userPlays.value = [] as Plays[])
+  }
+  return (userPlays.value = playsData)
+}
+
 onMounted(async () => {
   const userGameData = userStore.user?.games?.find((game) => game.gameId === props.id)
-  const playsData = userStore.user?.plays?.filter((play) => play.gameId === props.id)
-
+  findGamePlays()
   const gameData = findGame()
 
-  if (gameData.bggId === undefined || userGameData === undefined || playsData === undefined) {
+  if (gameData.bggId === undefined || userGameData === undefined) {
     return
   }
+
   userGameInfo.value = userGameData
   game.value = gameData
-  userPlays.value = playsData
   return
 })
 </script>

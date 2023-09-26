@@ -120,7 +120,6 @@ const updatePage = () => {
   pageResult.value.lastPage = pageResult.value.currentPage == pageResult.value.pages
 
   const searchResults = getPage(props.userPlays, pageResult.value.currentPage)
-  console.log('PlaysTable updatepage function', searchResults)
   if (searchResults === undefined || searchResults.page.length === 0) {
     return
   }
@@ -171,7 +170,6 @@ onMounted(() => {
 watch(
   () => props.userPlays,
   () => {
-    console.log('PlaysTable watch', props.userPlays)
     pageResult.value.pages = Math.ceil(props.userPlays.length / PAGE_SIZE)
     updatePage()
   }
