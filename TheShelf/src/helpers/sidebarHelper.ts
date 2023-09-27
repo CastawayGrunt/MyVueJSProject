@@ -4,3 +4,17 @@ export const toggleSidebar = () => {
 
   sidebar.classList.toggle('toggled')
 }
+
+export const setActiveLink = (link: string) => {
+  const activeLink = document.getElementById(link)
+  if (!activeLink) return
+
+  activeLink.classList.add('active')
+}
+
+export const removeActiveLink = (link: string) => {
+  const activeLink = document.getElementById(link)
+  if (!activeLink) return
+
+  activeLink.classList.remove('active')
+}

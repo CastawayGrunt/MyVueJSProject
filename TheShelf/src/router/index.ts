@@ -140,7 +140,7 @@ const router = createRouter({
   ]
 })
 
-router.beforeEach(async (to, from, next) => {
+router.beforeEach(async (to, from) => {
   const title = to.meta.title as string
   if (title) {
     document.title = `The Shelf - ${title}`
@@ -158,7 +158,6 @@ router.beforeEach(async (to, from, next) => {
   if (from === START_LOCATION && userStore.isAuthenticated) {
     await useUserStore().getGames()
   }
-  next()
 })
 
 export default router

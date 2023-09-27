@@ -10,79 +10,17 @@
     <hr class="sidebar-divider my-0" />
 
     <!-- Nav Item - Dashboard -->
-    <li class="nav-item active" @click.prevent="linkToggleSidebar()">
+    <li class="nav-item" @click.prevent="linkToggleSidebar()" id="/dashboard">
       <RouterLink to="/dashboard" class="nav-link">
         <i class="fas fa-fw fa-tachometer-alt"></i>
         <span>Dashboard</span>
       </RouterLink>
     </li>
-    <li class="nav-item active" @click.prevent="linkToggleSidebar()">
+    <li class="nav-item" @click.prevent="linkToggleSidebar()" id="/collection">
       <RouterLink to="/collection/games" class="nav-link">
         <i class="fas fa-fw fa-layer-group"></i>
         <span>Collection</span>
       </RouterLink>
-    </li>
-
-    <!-- Divider -->
-    <hr class="sidebar-divider" />
-
-    <!-- Heading -->
-    <div class="sidebar-heading">Interface</div>
-
-    <!-- Nav Item - Pages Collapse Menu -->
-    <li class="nav-item">
-      <a
-        class="nav-link collapsed"
-        href="#"
-        data-toggle="collapse"
-        data-target="#collapseTwo"
-        aria-expanded="true"
-        aria-controls="collapseTwo"
-      >
-        <i class="fas fa-fw fa-cog"></i>
-        <span>Components</span>
-      </a>
-      <div
-        id="collapseTwo"
-        class="collapse"
-        aria-labelledby="headingTwo"
-        data-parent="#accordionSidebar"
-      >
-        <div class="bg-white py-2 collapse-inner rounded">
-          <h6 class="collapse-header">Custom Components:</h6>
-          <a class="collapse-item" href="buttons.html">Buttons</a>
-          <a class="collapse-item" href="cards.html">Cards</a>
-        </div>
-      </div>
-    </li>
-
-    <!-- Nav Item - Utilities Collapse Menu -->
-    <li class="nav-item">
-      <a
-        class="nav-link collapsed"
-        href="#"
-        data-toggle="collapse"
-        data-target="#collapseUtilities"
-        aria-expanded="true"
-        aria-controls="collapseUtilities"
-      >
-        <i class="fas fa-fw fa-wrench"></i>
-        <span>Utilities</span>
-      </a>
-      <div
-        id="collapseUtilities"
-        class="collapse"
-        aria-labelledby="headingUtilities"
-        data-parent="#accordionSidebar"
-      >
-        <div class="bg-white py-2 collapse-inner rounded">
-          <h6 class="collapse-header">Custom Utilities:</h6>
-          <a class="collapse-item" href="utilities-color.html">Colors</a>
-          <a class="collapse-item" href="utilities-border.html">Borders</a>
-          <a class="collapse-item" href="utilities-animation.html">Animations</a>
-          <a class="collapse-item" href="utilities-other.html">Other</a>
-        </div>
-      </div>
     </li>
 
     <!-- Divider -->
@@ -102,9 +40,10 @@
 
 <script setup lang="ts">
 import { RouterLink } from 'vue-router'
-import { toggleSidebar } from '@/helpers/sidebarHelper'
+import { setActiveLink, removeActiveLink, toggleSidebar } from '@/helpers/sidebarHelper'
 import { useWindowSize } from '@vueuse/core'
-import { watch } from 'vue'
+import { onMounted, watch } from 'vue'
+import router from '@/router'
 
 const { width } = useWindowSize()
 
@@ -122,24 +61,26 @@ watch(
     }
   }
 )
-// import router from '@/router'
 
-// const active = () => {
-//   const current = router.currentRoute.value.path
-//   console.log(current)
-//   const links = document.querySelectorAll('.nav-item')
-//   links.forEach((link) => console.log(link.baseURI))
+watch(
+  () => router.currentRoute.value.path,
+  (newPath, oldPath) => {
+    newPath = path(newPath)
+    oldPath = path(oldPath)
+    if (newPath === oldPath) return
+    setActiveLink(newPath)
+    removeActiveLink(oldPath)
+  }
+)
 
-//   links.forEach((link) => {
-//     if (link.baseURI === current) {
-//       link.classList.add('active')
-//     } else {
-//       link.classList.remove('active')
-//     }
-//   })
+const path = (route: string) => {
+  if (route.includes('/collection')) return '/collection'
+  return route
+}
 
-//   return active
-// }
+onMounted(() => {
+  setActiveLink(path(router.currentRoute.value.path))
+})
 </script>
 
 <style scoped></style>

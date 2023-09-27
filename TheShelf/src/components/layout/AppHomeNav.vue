@@ -11,7 +11,7 @@
     </RouterLink>
     <ul class="navbar-nav ml-auto">
       <RouterLink v-if="showAbout" to="/about" class="my-auto mr-4">About</RouterLink>
-      <RouterLink v-if="isLoggedIn" to="/Dashboard" class="btn btn-primary my-auto"
+      <RouterLink v-if="isLoggedIn" to="/dashboard" class="btn btn-primary my-auto"
         >Return to App</RouterLink
       >
       <RouterLink v-else to="/login" class="btn btn-primary my-auto">Login</RouterLink>
