@@ -76,8 +76,6 @@ const pageResult = ref({
   lastPage: ref(false)
 })
 
-console.log('PlaysTable', props.userPlays)
-
 const results = ref([] as Plays[])
 
 const PAGE_SIZE = 5

@@ -110,7 +110,7 @@ export async function addFireUserGamePlay(user: FireUser, game: GameCollection, 
   }
 
   if (user.mostPlayed !== game.name) {
-    const mostPlayedGameName = findMostPlayedGame(user)
+    const mostPlayedGameName = findMostPlayedGame(user, game)
 
     await updateDoc(userRef, {
       plays: arrayUnion(play),
@@ -129,7 +129,10 @@ export async function addFireUserGamePlay(user: FireUser, game: GameCollection, 
   return { mostPlayedGameName: user.mostPlayed }
 }
 
-function findMostPlayedGame(user: FireUser) {
+function findMostPlayedGame(user: FireUser, game: GameCollection) {
+  if (user.plays.length === 0) {
+    return game.name
+  }
   //found here https://stackoverflow.com/questions/6120931/how-to-count-certain-elements-in-array
   type countPlays = {
     [key: string]: number

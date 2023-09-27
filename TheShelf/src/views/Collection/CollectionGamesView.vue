@@ -26,7 +26,7 @@
         @onDeleteGame="removeGame(game)"
       />
     </div>
-    <p v-else class="d-flex justify-content-center">No results found</p>
+    <p v-else class="d-flex justify-content-center">No games found</p>
   </div>
 </template>
 
@@ -73,11 +73,11 @@ const loadCollection = async () => {
     }
   }
 
-  if (games) {
+  if (games && games?.length > 0) {
     collection.value = games
     return (loadingGamesStatus.value = loadingGamesEnum.resultsLoaded)
   } else {
-    return (loadingGamesStatus.value = loadingGamesEnum.noResults)
+    return (loadingGamesStatus.value = loadingGamesEnum.init)
   }
 }
 

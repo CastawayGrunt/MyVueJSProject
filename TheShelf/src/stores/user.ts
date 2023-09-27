@@ -29,6 +29,7 @@ import {
 import { useStorage } from '@vueuse/core'
 import { deleteUserImage, uploadUserImage } from '@/services/fireFileBucket'
 import { serverTimestamp } from 'firebase/firestore'
+import { placeholderImg } from '@/helpers/placeHolders'
 
 const defaultUserLocal: FireUser = {
   id: '',
@@ -135,6 +136,7 @@ export const useUserStore = defineStore('user', {
     async uploadProfilePicture(file: File) {
       const imageFilePath = `${this.user?.id}_${file.name}`
       const url = await uploadUserImage(imageFilePath, file)
+      console.log('url', url)
 
       if (!url || url.length == 0) {
         return null
@@ -148,7 +150,6 @@ export const useUserStore = defineStore('user', {
       return url
     },
     async removeProfilePicture() {
-      const placeholderImg = '/img/undraw_default_avatar.svg'
       if (this.user?.photoURL.includes(placeholderImg)) {
         return true
       }

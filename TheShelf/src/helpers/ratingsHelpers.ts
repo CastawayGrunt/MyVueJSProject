@@ -27,10 +27,10 @@ export const ratingAverage = (ratings: Ratings) => {
   const average = totalScore / totalRatings
 
   const formattedAverage = () => {
-    if (!average.toString().includes('0')) {
-      return average.toString()
+    if (average.toString().includes('.')) {
+      return average.toFixed(1)
     }
-    return average.toFixed(1)
+    return average.toString()
   }
 
   return (rating = {

@@ -100,6 +100,7 @@ import { RouterLink, useRouter } from 'vue-router'
 import { ref } from 'vue'
 import { useUserStore } from '@/stores/user'
 import type { FireUser } from '@/services/fireUserData'
+import { placeholderImg } from '@/helpers/placeHolders'
 
 const userStore = useUserStore()
 const $router = useRouter()
@@ -125,7 +126,7 @@ const registerUserClicked = async () => {
   const user: FireUser = {
     id: '',
     email: email.value,
-    photoURL: '/assets/img/undraw_default_avatar.svg',
+    photoURL: placeholderImg,
     displayName: `${firstName.value} ${lastName.value}`,
     games: [],
     plays: [],
