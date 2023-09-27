@@ -27,7 +27,7 @@
               <i class="fa fa-upload pr-2"></i>Update Profile Picture
             </button>
             <button
-              :disabled="sendingEmail"
+              :disabled="defaultPhoto"
               class="btn btn-danger"
               type="button"
               @click.prevent="removeClicked()"
@@ -36,50 +36,19 @@
             </button>
           </div>
         </div>
-        <!-- <div
-          v-if="emailConfirmed === 'success'"
-          class="alert alert-success alert-dismissible fade show mb-0 ml-4"
-          role="alert"
-        >
-          Email Sent
-          <button
-            type="button"
-            class="close"
-            data-dismiss="alert"
-            aria-label="Close"
-            @click="closeAlert()"
-          >
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div
-          v-else-if="emailConfirmed === 'failed'"
-          class="alert alert-danger alert-dismissible fade show mt-3 mt-md-0 mb-0 ml-md-4"
-          role="alert"
-        >
-          Email failed, try again later.
-          <button
-            type="button"
-            class="close"
-            data-dismiss="alert"
-            aria-label="Close"
-            @click="closeAlert()"
-          >
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div> -->
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { placeholderImg } from '@/helpers/placeHolders'
 import { useUserStore } from '@/stores/user'
 import { useFileDialog } from '@vueuse/core'
 import { ref, onMounted, onUpdated } from 'vue'
 
 const { open, onChange } = useFileDialog()
-const sendingEmail = ref(false)
+const defaultPhoto = ref(true)
 const updatingImage = ref(false)
 
 const userStore = useUserStore()
@@ -96,6 +65,9 @@ onUpdated(() => {
 })
 
 onMounted(() => {
+  if (userStore.user?.photoURL !== placeholderImg) {
+    defaultPhoto.value = false
+  }
   if (userStore.user) {
     profileURL.value = userStore.user.photoURL
   }
