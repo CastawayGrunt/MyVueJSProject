@@ -136,7 +136,6 @@ export const useUserStore = defineStore('user', {
     async uploadProfilePicture(file: File) {
       const imageFilePath = `${this.user?.id}_${file.name}`
       const url = await uploadUserImage(imageFilePath, file)
-      console.log('url', url)
 
       if (!url || url.length == 0) {
         return null

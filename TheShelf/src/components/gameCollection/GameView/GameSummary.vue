@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <div class="col mb-2">
+  <div class="mb-2">
+    <div class="col h-100">
       <div class="card h-100">
         <div class="card-header d-flex flex-row align-items-center justify-content-between">
           <RouterLink

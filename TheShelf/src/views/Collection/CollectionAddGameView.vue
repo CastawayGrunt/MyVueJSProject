@@ -19,16 +19,6 @@
     :games="results"
     @openAddGameModal="openAddGameModal"
   />
-  <AppPagination
-    v-if="loadingGamesStatus === loadingGamesEnum.resultsLoaded"
-    :pageCount="pages"
-    :current-page="currentPage"
-    :first-page="firstPage"
-    :last-page="lastPage"
-    @onNextClicked="onNext"
-    @onPrevClicked="onPrev"
-    @onPageClicked="onPage"
-  />
   <AddGameModal
     v-if="activeGame"
     :game="activeGame"
@@ -41,7 +31,6 @@
 import SearchBar from '@/components/SearchBar.vue'
 import LoadingSpinner from '@/components/LoadingSpinner.vue'
 import CollectionNavGroup from '@/components/gameCollection/CollectionNavGroup.vue'
-import AppPagination from '@/components/gameCollection/AppPagination.vue'
 import SearchTable from '@/components/gameCollection/GameAdd/SearchTable.vue'
 import AddGameModal from '@/components/gameCollection/GameAdd/AddGameModal.vue'
 import {
@@ -58,10 +47,6 @@ const results = ref([] as GameSearchResponse[])
 const loadingGamesStatus = ref('init')
 const loadingGameStatus = ref('init')
 const activeGame = ref({} as GameIdResponse)
-const pages = ref(0)
-const currentPage = ref(1)
-const firstPage = ref(true)
-const lastPage = ref(false)
 
 const gameSearchStore = useGameSearchStore()
 
@@ -73,62 +58,16 @@ const searchTitle = async (query: string) => {
 
   loadingGamesStatus.value = loadingGamesEnum.resultsLoading
 
-  await gameSearchStore.getSearchGames(query)
+  const getGames = await gameSearchStore.getSearchGames(query)
 
-  const searchResults = updatePage()
+  const searchResults = getGames
   if (searchResults === undefined || searchResults.length === 0) {
     loadingGamesStatus.value = loadingGamesEnum.noResults
     return
   }
 
-  pages.value = gameSearchStore.pageCount
-
   loadingGamesStatus.value = loadingGamesEnum.resultsLoaded
   return (results.value = searchResults)
-}
-
-const onNext = () => {
-  currentPage.value++
-  if (currentPage.value === pages.value) {
-    lastPage.value = true
-  }
-  if (currentPage.value > 1) {
-    firstPage.value = false
-  }
-  updatePage()
-}
-
-const onPrev = () => {
-  currentPage.value--
-  if (currentPage.value === 1) {
-    firstPage.value = true
-  }
-  if (currentPage.value < pages.value) {
-    lastPage.value = false
-  }
-  updatePage()
-}
-
-const onPage = (page: number) => {
-  currentPage.value = page
-  if (currentPage.value === pages.value) {
-    lastPage.value = true
-  }
-  if (currentPage.value === 1) {
-    firstPage.value = true
-  }
-  updatePage()
-}
-
-const updatePage = () => {
-  firstPage.value = currentPage.value == 1
-  lastPage.value = currentPage.value == pages.value
-
-  const searchResults = gameSearchStore.getPage(currentPage.value)
-  if (searchResults === undefined || searchResults.page.length === 0) {
-    return
-  }
-  return (results.value = searchResults.page)
 }
 
 const searchGameById = async (query: number) => {

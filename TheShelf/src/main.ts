@@ -3,6 +3,8 @@ import './assets/main.css'
 import { createApp } from 'vue'
 import { VueFire, VueFireAuth } from 'vuefire'
 import { createPinia } from 'pinia'
+import PrimeVue from 'primevue/config'
+import 'primevue/resources/themes/bootstrap4-light-blue/theme.css'
 
 import App from './App.vue'
 import router from './router'
@@ -16,5 +18,6 @@ app.use(VueFire, {
   firebaseApp,
   modules: [VueFireAuth()]
 })
+app.use(PrimeVue)
 
 app.mount('#app')
