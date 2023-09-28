@@ -171,6 +171,7 @@
       :game="userGameInfo"
       @cancelAddComment="hideAddComment"
     />
+    <Toast />
   </div>
 </template>
 
@@ -185,8 +186,10 @@ import { type GameType } from '@/services/fireGameData'
 import { ref, onMounted, watch } from 'vue'
 import type { GameCollection, Plays } from '@/services/fireUserData'
 import { useUserStore } from '@/stores/user'
+import { useToast } from 'primevue/usetoast'
 
 const userStore = useUserStore()
+const toast = useToast()
 
 const props = defineProps<{
   game: GameType
@@ -230,10 +233,22 @@ watch(
 const submitRating = async (newRating: number) => {
   const ratingSuccuess = await userStore.updateGameRating(props.game, newRating)
   if (ratingSuccuess === false) {
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: 'Error updating rating, please try again later',
+      life: 3000
+    })
     return
   }
   userRating.value = newRating
 
+  toast.add({
+    severity: 'success',
+    summary: 'Success',
+    detail: 'Rating updated',
+    life: 3000
+  })
   return (ratingChanged.value = false)
 }
 
@@ -241,8 +256,23 @@ const openRemoveGamePlayModal = (play: Plays) => {
   activePlay.value = play
 }
 
-const removePlay = (play: Plays) => {
-  userStore.deleteGamePlay(play)
+const removePlay = async (play: Plays) => {
+  const removed = await userStore.deleteGamePlay(play)
+  if (removed) {
+    toast.add({
+      severity: 'success',
+      summary: 'Play Removed',
+      detail: 'Play has been removed from your collection',
+      life: 3000
+    })
+  } else {
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: 'Error removing play, please try again later',
+      life: 3000
+    })
+  }
   resetActivePlay()
 }
 

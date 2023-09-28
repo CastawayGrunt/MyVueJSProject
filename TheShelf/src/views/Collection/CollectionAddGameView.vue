@@ -25,6 +25,7 @@
     @cancelAddGame="resetActiveGame"
     @addGame="addGame"
   />
+  <Toast />
 </template>
 
 <script lang="ts" setup>
@@ -42,11 +43,14 @@ import { loadingGamesEnum, loadingGameEnum } from '@/enums/modules/LoadingEnum'
 import { ref } from 'vue'
 import { useUserStore } from '@/stores/user'
 import { useGameSearchStore } from '@/stores/gameSearch'
+import { useToast } from 'primevue/usetoast'
+import { findGameName } from '@/helpers/stringHelpers'
 
 const results = ref([] as GameSearchResponse[])
 const loadingGamesStatus = ref('init')
 const loadingGameStatus = ref('init')
 const activeGame = ref({} as GameIdResponse)
+const toast = useToast()
 
 const gameSearchStore = useGameSearchStore()
 
@@ -99,7 +103,14 @@ const addGame = async (game: GameIdResponse) => {
   const userStore = useUserStore()
 
   await userStore.addGame(game)
+  const name = findGameName(game)
 
+  toast.add({
+    severity: 'success',
+    summary: 'Game Added',
+    detail: `${name} has been added to your collection`,
+    life: 3000
+  })
   resetActiveGame()
 }
 </script>

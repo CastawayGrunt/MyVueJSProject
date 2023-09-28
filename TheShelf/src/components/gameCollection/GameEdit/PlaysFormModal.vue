@@ -101,6 +101,7 @@
         </div>
       </div>
     </div>
+    <Toast />
   </div>
 </template>
 
@@ -108,6 +109,7 @@
 import { ref } from 'vue'
 import type { GameCollection, Plays } from '@/services/fireUserData'
 import { useUserStore } from '@/stores/user'
+import { useToast } from 'primevue/usetoast'
 
 const userStore = useUserStore()
 const newPlay = ref<Plays>({
@@ -116,6 +118,7 @@ const newPlay = ref<Plays>({
   location: '',
   players: []
 })
+const toast = useToast()
 
 const props = defineProps<{
   game: GameCollection
@@ -135,6 +138,12 @@ const onPlaySubmit = async (play: Plays) => {
 
   const playAdded = await userStore.addGamePlay(props.game, play)
   if (playAdded) {
+    toast.add({
+      severity: 'success',
+      summary: 'Play Added',
+      detail: 'Play has been added to your collection',
+      life: 3000
+    })
     resetPlayRef()
   }
 }

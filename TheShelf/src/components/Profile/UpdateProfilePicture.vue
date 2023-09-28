@@ -35,6 +35,7 @@
               <i class="fa fa-trash pr-2"></i>Remove Profile Picture
             </button>
           </div>
+          <Toast />
         </div>
       </div>
     </div>
@@ -46,11 +47,13 @@ import { placeholderImg } from '@/helpers/placeHolders'
 import { useUserStore } from '@/stores/user'
 import { useFileDialog } from '@vueuse/core'
 import { ref, onMounted, onUpdated } from 'vue'
+import { useToast } from 'primevue/usetoast'
 
 const { open, onChange } = useFileDialog()
 const defaultPhoto = ref(true)
 const updatingImage = ref(false)
 
+const toast = useToast()
 const userStore = useUserStore()
 const profileURL = ref('')
 
@@ -61,6 +64,11 @@ const uploadClicked = () => {
 onUpdated(() => {
   if (userStore.user) {
     profileURL.value = userStore.user.photoURL
+  }
+  if (userStore.user?.photoURL !== placeholderImg) {
+    defaultPhoto.value = false
+  } else {
+    defaultPhoto.value = true
   }
 })
 
@@ -83,15 +91,42 @@ const uploadImage = async (file: File) => {
   const removedOldPic = await userStore.removeProfilePicture()
   if (removedOldPic) {
     await userStore.uploadProfilePicture(file)
+    toast.add({
+      severity: 'success',
+      summary: 'Profile Picture Updated',
+      detail: 'Your profile picture has been updated.',
+      life: 3000
+    })
+  } else {
+    toast.add({
+      severity: 'error',
+      summary: 'Profile Picture Update Failed',
+      detail: 'Your profile picture failed to update, try again later.',
+      life: 3000
+    })
   }
+
   updatingImage.value = false
 }
 
 const removeClicked = async () => {
-  const url = await userStore.removeProfilePicture()
+  const pictureRemoved = await userStore.removeProfilePicture()
 
-  if (url && userStore.user) {
+  if (pictureRemoved && userStore.user) {
     profileURL.value = userStore.user.photoURL
+    toast.add({
+      severity: 'success',
+      summary: 'Profile Picture Removed',
+      detail: 'Your profile picture has been removed.',
+      life: 3000
+    })
+  } else {
+    toast.add({
+      severity: 'error',
+      summary: 'Profile Picture Removal Failed',
+      detail: 'Your profile picture failed to remove, try again later.',
+      life: 3000
+    })
   }
 }
 </script>

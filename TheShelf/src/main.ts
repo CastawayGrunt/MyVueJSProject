@@ -4,6 +4,8 @@ import { createApp } from 'vue'
 import { VueFire, VueFireAuth } from 'vuefire'
 import { createPinia } from 'pinia'
 import PrimeVue from 'primevue/config'
+import Toast from 'primevue/toast'
+import ToastServiceMethods from 'primevue/toastservice'
 import 'primevue/resources/themes/bootstrap4-light-blue/theme.css'
 
 import App from './App.vue'
@@ -19,5 +21,9 @@ app.use(VueFire, {
   modules: [VueFireAuth()]
 })
 app.use(PrimeVue)
+app.use(ToastServiceMethods)
+
+// eslint-disable-next-line vue/multi-word-component-names
+app.component('Toast', Toast)
 
 app.mount('#app')

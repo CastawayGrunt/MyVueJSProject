@@ -54,6 +54,7 @@
         </div>
       </div>
     </div>
+    <Toast />
   </div>
 </template>
 
@@ -61,9 +62,11 @@
 import { ref, onMounted } from 'vue'
 import type { GameCollection } from '@/services/fireUserData'
 import { useUserStore } from '@/stores/user'
+import { useToast } from 'primevue/usetoast'
 
 const userStore = useUserStore()
 const newComment = ref<string>('')
+const toast = useToast()
 
 const props = defineProps<{
   game: GameCollection
@@ -72,7 +75,20 @@ const props = defineProps<{
 const onCommentSubmit = async (comment: string) => {
   const commentAdded = await userStore.updateGameComment(props.game, comment)
   if (commentAdded) {
+    toast.add({
+      severity: 'success',
+      summary: 'Comment Added',
+      detail: `Comment added for ${props.game.name}`,
+      life: 3000
+    })
     resetCommentRef()
+  } else {
+    toast.add({
+      severity: 'error',
+      summary: 'Comment Not Added',
+      detail: `Comment not added for ${props.game.name}`,
+      life: 3000
+    })
   }
 }
 
