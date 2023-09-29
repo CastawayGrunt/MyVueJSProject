@@ -23,21 +23,24 @@
                       you a link to reset your password!
                     </p>
                   </div>
-                  <form class="user">
-                    <div class="form-group">
-                      <input
-                        type="email"
-                        class="form-control form-control-user"
-                        id="exampleInputEmail"
-                        aria-describedby="emailHelp"
-                        placeholder="Enter Email Address..."
-                        v-model="email"
-                      />
+                  <form @submit="onSubmit">
+                    <div class="field">
+                      <span class="p-float-label">
+                        <InputText
+                          id="email"
+                          v-bind="email"
+                          type="text"
+                          class="w-100"
+                          :class="{ 'p-invalid': errors.email }"
+                          aria-describedby="text-error"
+                        />
+                        <label for="email">Email</label>
+                      </span>
+                      <small v-if="errors.email" class="p-error" id="text-error">{{
+                        errors.email || '&nbsp;'
+                      }}</small>
                     </div>
-                    <button
-                      @click.prevent="onPasswordResetClicked"
-                      class="btn btn-primary btn-user btn-block"
-                    >
+                    <button type="submit" class="btn btn-primary btn-user btn-block">
                       Reset Password
                     </button>
                   </form>
@@ -62,25 +65,35 @@
 
 <script lang="ts" setup>
 import { RouterLink, useRouter } from 'vue-router'
-import { ref } from 'vue'
 import { useUserStore } from '@/stores/user'
+import InputText from 'primevue/inputtext'
+import { useForm } from 'vee-validate'
+import * as yup from 'yup'
 
 const userStore = useUserStore()
 const $router = useRouter()
 
-const email = ref('')
+const schema = yup.object({
+  email: yup.string().required().email()
+})
 
-const onPasswordResetClicked = async () => {
-  if (!email.value) {
-    return alert('Please enter your email address')
-  }
+const { defineComponentBinds, handleSubmit, resetForm, errors } = useForm({
+  validationSchema: schema
+})
 
-  const success = await userStore.requestChangePasswordEmail(email.value)
+const email = defineComponentBinds('email')
 
+const onSubmit = handleSubmit(async (values) => {
+  const email = `${values.email}`
+  console.log(email)
+  const success = await userStore.requestChangePasswordEmail(email)
+
+  console.log(success)
   if (success) {
+    resetForm()
     $router.push('/login')
   }
-}
+})
 </script>
 
 <style scoped></style>

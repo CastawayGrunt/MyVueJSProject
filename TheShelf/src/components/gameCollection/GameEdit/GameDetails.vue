@@ -51,8 +51,8 @@
         </div>
 
         <div class="p-2">
-          <div class="d-flex flex-column flex-md-row">
-            <div class="col-md-4 p-2 d-flex align-items-center">
+          <div class="d-flex flex-column md:flex-row">
+            <div class="md:col-4 p-2 d-flex align-items-center">
               <img :src="game?.image" class="card-img img-fluid" />
             </div>
             <div class="p-3 d-flex flex-column">
@@ -74,7 +74,7 @@
           </div>
           <div class="d-flex flex-column p-3">
             <form>
-              <div class="d-flex flex-column flex-md-row">
+              <div class="d-flex flex-column md:flex-row">
                 <div class="label font-weight-bold d-flex align-items-center">
                   Your Rating:
                   <div class="rating">
@@ -117,7 +117,7 @@
                 </div>
                 <button
                   v-if="ratingChanged"
-                  class="btn btn-outline-primary mb-2 ml-md-2"
+                  class="btn btn-outline-primary mb-2 md:ml-2"
                   type="submit"
                   @click.prevent="submitRating(userRating)"
                 >

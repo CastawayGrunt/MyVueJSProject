@@ -1,5 +1,5 @@
 <template>
-  <div class="d-flex flex-column flex-md-row justify-content-between mb-2">
+  <div class="d-flex flex-column md:flex-row justify-content-between mb-2">
     <SearchBar @onSubmit="searchTitle" placeholder="Search for a game..." />
     <CollectionNavGroup />
   </div>

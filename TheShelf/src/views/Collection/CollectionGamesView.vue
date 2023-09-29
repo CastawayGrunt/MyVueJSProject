@@ -1,8 +1,8 @@
 <template>
-  <div class="d-flex flex-column flex-md-row justify-content-between mb-2 mb-md-4">
+  <div class="d-flex flex-column md:flex-row justify-content-between mb-2 md:mb-4">
     <SearchBar @onSubmit="filterGames" placeholder="Search Collection" />
     <SortCollection
-      class="order-2 order-md-0"
+      class="order-2 md:flex-order-0"
       :disableButton="disableButton"
       @sortName="sortName()"
       @sortYear="sortYear()"

@@ -123,7 +123,7 @@
 <script lang="ts" setup>
 import AppHeader from '@/components/layout/AppHeader.vue'
 import { useUserStore } from '@/stores/user'
-import { computed } from 'vue'
+import { computed, onMounted } from 'vue'
 
 const user = useUserStore().user
 const games = useUserStore().games
@@ -171,6 +171,10 @@ const gamesSummary = computed(() => {
     lastPlayed,
     mostPlayedGame
   }
+})
+
+onMounted(() => {
+  console.log(gamesSummary.value.mostPlayedGame())
 })
 </script>
 

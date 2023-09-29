@@ -1,11 +1,11 @@
 <template>
   <!-- Page Wrapper -->
-  <div id="wrapper" class="d-flex flex-column align-items-center h-100">
+  <div id="wrapper" class="d-flex flex-column align-items-center vh-100 relative">
     <AppHomeNav />
-    <div class="container row my-atuo h-100">
+    <div class="container row my-auto h-100">
       <div
         id="description"
-        class="text-white p-4 col-12 col-md-6 d-flex justify-content-end justify-content-md-center align-items-start flex-column"
+        class="text-white p-4 col-12 col-md-6 d-flex justify-content-end md:justify-content-center align-items-start flex-column"
       >
         <h1 class="text-uppercase">The Shelf</h1>
         <p class="text-wrap">

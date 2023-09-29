@@ -18,61 +18,90 @@
                   <div class="text-center">
                     <h1 class="h4 text-gray-900 mb-4">Create an Account!</h1>
                   </div>
-                  <form class="user">
-                    <div class="form-group row">
-                      <div class="col-sm-6 mb-3 mb-sm-0">
-                        <input
-                          type="text"
-                          class="form-control form-control-user"
-                          id="exampleFirstName"
-                          placeholder="First Name"
-                          v-model="firstName"
-                        />
+                  <form @submit="onSubmit">
+                    <div class="p-fluid formgrid grid">
+                      <div class="field col-12 col-md-6">
+                        <span class="p-float-label">
+                          <InputText
+                            id="firstName"
+                            v-bind="firstName"
+                            type="text"
+                            :class="{ 'p-invalid': errors.firstName }"
+                            aria-describedby="text-error"
+                          />
+                          <label for="firstName">First Name</label>
+                        </span>
+                        <small v-if="errors.firstName" class="p-error" id="text-error">{{
+                          errors.firstName || '&nbsp;'
+                        }}</small>
                       </div>
-                      <div class="col-sm-6">
-                        <input
-                          type="text"
-                          class="form-control form-control-user"
-                          id="exampleLastName"
-                          placeholder="Last Name"
-                          v-model="lastName"
-                        />
+                      <div class="field col-12 col-md-6">
+                        <span class="p-float-label">
+                          <InputText
+                            id="lastName"
+                            v-bind="lastName"
+                            type="text"
+                            :class="{ 'p-invalid': errors.lastName }"
+                            aria-describedby="text-error"
+                          />
+                          <label for="lastName">Last Name</label>
+                        </span>
+                        <small v-if="errors.lastName" class="p-error" id="text-error">{{
+                          errors.lastName || '&nbsp;'
+                        }}</small>
+                      </div>
+
+                      <div class="field col-12">
+                        <span class="p-float-label mt-2">
+                          <InputText
+                            id="email"
+                            v-bind="email"
+                            type="text"
+                            :class="{ 'p-invalid': errors.email }"
+                            aria-describedby="text-error"
+                          />
+                          <label for="email">Email</label>
+                        </span>
+                        <small v-if="errors.email" class="p-error" id="text-error">{{
+                          errors.email || '&nbsp;'
+                        }}</small>
+                      </div>
+                      <div class="field col-12 col-md-6">
+                        <span class="p-float-label mt-2">
+                          <Password
+                            id="password"
+                            v-bind="password"
+                            type="text"
+                            :class="{ 'p-invalid': errors.password }"
+                            toggleMask
+                            aria-describedby="text-error"
+                            input-id="password"
+                          />
+                          <label for="password">Password</label>
+                        </span>
+                        <small v-if="errors.password" class="p-error" id="text-error">{{
+                          errors.password || '&nbsp;'
+                        }}</small>
+                      </div>
+                      <div class="field col-12 col-md-6">
+                        <span class="p-float-label mt-2">
+                          <Password
+                            id="passwordCheck"
+                            v-bind="passwordCheck"
+                            type="text"
+                            :class="{ 'p-invalid': errors.passwordCheck }"
+                            toggleMask
+                            aria-describedby="text-error"
+                            input-id="passwordCheck"
+                          />
+                          <label for="passwordCheck">Repeat Password</label>
+                        </span>
+                        <small v-if="errors.passwordCheck" class="p-error" id="text-error">{{
+                          errors.passwordCheck || '&nbsp;'
+                        }}</small>
                       </div>
                     </div>
-                    <div class="form-group">
-                      <input
-                        type="email"
-                        class="form-control form-control-user"
-                        id="exampleInputEmail"
-                        placeholder="Email Address"
-                        v-model="email"
-                      />
-                    </div>
-                    <div class="form-group row">
-                      <div class="col-sm-6 mb-3 mb-sm-0">
-                        <input
-                          type="password"
-                          class="form-control form-control-user"
-                          id="exampleInputPassword"
-                          placeholder="Password"
-                          v-model="password"
-                        />
-                      </div>
-                      <div class="col-sm-6">
-                        <input
-                          type="password"
-                          class="form-control form-control-user"
-                          id="exampleRepeatPassword"
-                          placeholder="Repeat Password"
-                          v-model="passwordCheck"
-                        />
-                      </div>
-                    </div>
-                    <button
-                      class="btn btn-primary btn-user btn-block"
-                      @click.prevent="registerUserClicked()"
-                      type="submit"
-                    >
+                    <button class="btn btn-primary btn-user btn-block" type="submit">
                       Register Account
                     </button>
                     <hr />
@@ -97,49 +126,58 @@
 
 <script lang="ts" setup>
 import { RouterLink, useRouter } from 'vue-router'
-import { ref } from 'vue'
+
 import { useUserStore } from '@/stores/user'
 import type { FireUser } from '@/services/fireUserData'
 import { placeholderImg } from '@/helpers/placeHolders'
+import InputText from 'primevue/inputtext'
+import Password from 'primevue/password'
+import { useForm } from 'vee-validate'
+import * as yup from 'yup'
 
 const userStore = useUserStore()
 const $router = useRouter()
 
-const email = ref('')
-const password = ref('')
-const passwordCheck = ref('')
-const firstName = ref('')
-const lastName = ref('')
+const schema = yup.object({
+  firstName: yup.string().required(),
+  lastName: yup.string().required(),
+  email: yup.string().required().email(),
+  password: yup.string().required('A Password is Required').min(6),
+  passwordCheck: yup
+    .string()
+    .oneOf([yup.ref('password')], 'Does not match password')
+    .required('A Password is Required')
+})
 
-const registerUserClicked = async () => {
-  if (
-    email.value === '' ||
-    password.value === '' ||
-    firstName.value === '' ||
-    lastName.value === ''
-  ) {
-    return
-  }
-  if (password.value !== passwordCheck.value) {
-    return
-  }
+const { defineComponentBinds, handleSubmit, resetForm, errors } = useForm({
+  validationSchema: schema
+})
+
+const firstName = defineComponentBinds('firstName')
+const lastName = defineComponentBinds('lastName')
+const email = defineComponentBinds('email')
+const password = defineComponentBinds('password')
+const passwordCheck = defineComponentBinds('passwordCheck')
+
+const onSubmit = handleSubmit(async (values) => {
   const user: FireUser = {
     id: '',
-    email: email.value,
+    email: `${values.email}`,
     photoURL: placeholderImg,
-    displayName: `${firstName.value} ${lastName.value}`,
+    displayName: `${values.firstName} ${values.lastName}`,
     games: [],
     plays: [],
     lastPlayed: '',
     mostPlayed: ''
   }
   const credentials = {
-    email: email.value,
-    password: password.value
+    email: values.email,
+    password: values.password
   }
   await userStore.register({ ...credentials }, user)
+  resetForm()
   $router.push({ name: 'dashboard' })
-}
+})
 </script>
 
 <style scoped></style>

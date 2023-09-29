@@ -2,7 +2,7 @@
   <div class="card mb-3">
     <div class="card-header">Change Profile Picture</div>
     <div class="card-body">
-      <div class="d-flex flex-column flex-md-row align-items-center">
+      <div class="d-flex flex-column md:flex-row align-items-center">
         <div>
           <img
             style="height: 200px"
@@ -12,9 +12,9 @@
           />
         </div>
         <div
-          class="d-flex flex-column align-items-center align-items-md-start justify-content-center mt-2 mt-md-0 ml-md-4"
+          class="d-flex flex-column align-items-center md:align-items-start justify-content-center mt-2 md:mt-0 md:ml-4"
         >
-          <p class="text-center text-md-left">
+          <p class="text-center md:text-left">
             Use the options below to customize your profile image.
           </p>
           <div class="d-flex flex-column justify-content-center">

@@ -1,17 +1,17 @@
 <template>
-  <div id="wrapper" class="d-flex flex-column align-items-center">
+  <div id="wrapper" class="d-flex flex-column align-items-center overflow-auto">
     <AppHomeNav />
-    <div class="container my-auto">
+    <div class="container mb-4">
       <div class="card p-4">
         <h1 class="">About The Shelf</h1>
-        <div class="d-flex flex-column flex-md-row align-items-center">
+        <div class="d-flex flex-column md:flex-row align-items-center">
           <img
             class="rounded-circle"
             src="@/assets/img/Brendon_Headshot_1.jpg"
             height="200"
             width="200"
           />
-          <p class="pt-4 pt-md-0 pl-md-4">
+          <p class="pt-4 md:pt-0 md:pl-4">
             The Shelf is a personal project created by
             <span class="font-weight-bold">Brendon Woodall</span>. Brendon is a software developer
             with a passion for board games. He created The Shelf while taking a Vue.js course with
@@ -45,13 +45,11 @@
           <a class="col-4 mb-2 text-center text-decoration-none" href="https://vuefire.vuejs.org/"
             >VueFire</a
           >
-
           <a
             class="col-4 mb-2 text-center text-decoration-none"
             href="https://www.typescriptlang.org/"
             >Typescript</a
           >
-
           <a class="col-4 mb-2 text-center text-decoration-none" href="https://getbootstrap.com/"
             >Bootstrap</a
           >
@@ -61,15 +59,22 @@
           <a class="col-4 mb-2 text-center text-decoration-none" href="https://nodejs.org/en"
             >Node.js</a
           >
-
+          <a class="col-4 text-center text-decoration-none" href="https://primevue.org/"
+            >PrimeVue</a
+          >
+          <a class="col-4 text-center text-decoration-none" href="https://primeflex.org/"
+            >PrimeFlex</a
+          >
+          <a class="col-4 text-center text-decoration-none" href="https://github.com/jquense/yup"
+            >Yup</a
+          >
           <a
-            class="col-6 col-md-4 text-center text-decoration-none"
+            class="col-4 text-center text-decoration-none"
             href="https://github.com/NaturalIntelligence/fast-xml-parser#readme"
             >fast-xml-parser</a
           >
-
           <a
-            class="col-6 col-md-4 text-center text-decoration-none"
+            class="col-4 text-center text-decoration-none"
             href="https://boardgamegeek.com/wiki/page/BGG_XML_API2#toc3"
             >BGG XML API2</a
           >

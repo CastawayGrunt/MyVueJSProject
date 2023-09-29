@@ -7,6 +7,7 @@ import PrimeVue from 'primevue/config'
 import Toast from 'primevue/toast'
 import ToastServiceMethods from 'primevue/toastservice'
 import 'primevue/resources/themes/bootstrap4-light-blue/theme.css'
+import '/node_modules/primeflex/primeflex.css'
 
 import App from './App.vue'
 import router from './router'
