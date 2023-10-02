@@ -77,27 +77,31 @@ export const useUserStore = defineStore('user', {
     },
     async login({ email, password }: Credentials) {
       userLocalStorage.value = null
-      const userAccount = await loginUser({ email, password })
+      try {
+        const userAccount = await loginUser({ email, password })
 
-      if (userAccount.user.displayName != null && userAccount.user.email != null) {
-        const userData = await getFireUser(userAccount.user.uid)
-        console.log('userdata', userData)
-        userLocalStorage.value = {
-          id: userData.id,
-          displayName: userData.displayName,
-          email: userData.email,
-          photoURL: userData.photoURL,
-          dateCreated: userData.dateCreated,
-          games: userData.games,
-          plays: userData.plays,
-          lastPlayed: userData.lastPlayed,
-          mostPlayed: userData.mostPlayed
+        if (userAccount.user.displayName != null && userAccount.user.email != null) {
+          const userData = await getFireUser(userAccount.user.uid)
+          userLocalStorage.value = {
+            id: userData.id,
+            displayName: userData.displayName,
+            email: userData.email,
+            photoURL: userData.photoURL,
+            dateCreated: userData.dateCreated,
+            games: userData.games,
+            plays: userData.plays,
+            lastPlayed: userData.lastPlayed,
+            mostPlayed: userData.mostPlayed
+          }
+          this.user = userLocalStorage.value
+          return { success: true }
+        } else {
+          this.user = null
+          return { success: false }
         }
-        this.user = userLocalStorage.value
-        return true
-      } else {
-        this.user = null
-        return false
+      } catch (error) {
+        const loginError = error as Error
+        return { success: false, error: loginError }
       }
     },
     async logout() {

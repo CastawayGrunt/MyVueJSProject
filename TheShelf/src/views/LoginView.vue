@@ -56,6 +56,9 @@
                         errors.password || '&nbsp;'
                       }}</small>
                     </div>
+                    <div v-if="loginError" class="alert alert-danger" role="alert">
+                      {{ loginError }}
+                    </div>
                     <button class="btn btn-primary btn-user btn-block mt-3" type="submit">
                       Login
                     </button>
@@ -84,9 +87,11 @@ import InputText from 'primevue/inputtext'
 import Password from 'primevue/password'
 import { useForm } from 'vee-validate'
 import * as yup from 'yup'
+import { ref } from 'vue'
 
 const userStore = useUserStore()
 const $router = useRouter()
+const loginError = ref('')
 
 const schema = yup.object({
   email: yup.string().required().email(),
@@ -107,10 +112,13 @@ const onSubmit = handleSubmit(async (values) => {
     email: `${values.email}`,
     password: `${values.password}`
   }
-  const success = await userStore.login(credentials)
-  if (success) {
+  const login = await userStore.login(credentials)
+  if (login.success) {
     resetForm()
     $router.push('/dashboard')
+  }
+  if (!login.success && login.error) {
+    loginError.value = login.error.message
   }
 })
 </script>
