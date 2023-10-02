@@ -288,11 +288,7 @@ const setCommentButtonText = (comment: string) => {
 }
 
 onMounted(() => {
-  if (props.userGameInfo.rating === undefined) {
-    userRating.value = 0
-  } else {
-    userRating.value = props.userGameInfo.rating
-  }
+  userRating.value = props.userGameInfo.rating
 
   setCommentButtonText(props.userGameInfo.comment)
 })

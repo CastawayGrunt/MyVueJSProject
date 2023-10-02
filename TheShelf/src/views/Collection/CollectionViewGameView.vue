@@ -27,8 +27,8 @@ if (userStore.user?.plays) {
   })
 }
 
-if (userStore.games) {
-  watchArray(userStore.games, (newGames, oldGames) => {
+if (userStore.gamesData) {
+  watchArray(userStore.gamesData, (newGames, oldGames) => {
     if (newGames !== oldGames || newGames !== undefined) {
       const gameData = findGame()
       game.value = gameData
@@ -36,7 +36,7 @@ if (userStore.games) {
   })
 }
 const findGame = () => {
-  const gameData = userStore.games?.find((game) => game.bggId === props.id)
+  const gameData = userStore.gamesData?.find((game) => game.bggId === props.id)
   if (gameData === undefined) {
     return (game.value = {} as GameType)
   }

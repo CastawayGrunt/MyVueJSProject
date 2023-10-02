@@ -3,14 +3,14 @@
     <button
       @click.prevent="goToCollection"
       :disabled="disableButton === 'games'"
-      class="btn btn-primary mt-2 mt-md-0"
+      class="btn btn-primary mt-2 md:mt-0"
     >
       View Collection
     </button>
     <button
       @click.prevent="goToSearch"
       :disabled="disableButton === 'add'"
-      class="btn btn-primary mt-2 mt-md-0"
+      class="btn btn-primary mt-2 md:mt-0"
     >
       Add Game
     </button>

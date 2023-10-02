@@ -4,7 +4,7 @@ import { defineStore } from 'pinia'
 export const useGameSearchStore = defineStore('gameSearch', {
   state: () => {
     return {
-      games: null as GameSearchResponse[] | null
+      gameSearch: null as GameSearchResponse[] | null
     }
   },
   getters: {},
@@ -16,7 +16,7 @@ export const useGameSearchStore = defineStore('gameSearch', {
           const sortedResults = this.sortResults(searchResults)
           const filteredResults = this.removeDuplicates(sortedResults)
 
-          return (this.games = filteredResults)
+          return (this.gameSearch = filteredResults)
         }
       }
     },

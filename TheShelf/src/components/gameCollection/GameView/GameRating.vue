@@ -27,6 +27,7 @@ watch(
 onMounted(() => {
   if (props.rating === undefined) {
     gameRating.value = '0'
+    numberOfRatings.value = 0
   } else {
     findDbGameRating(props.rating)
   }
@@ -37,6 +38,7 @@ const findDbGameRating = (rating: Ratings | undefined) => {
     const dbGameRating = ratingAverage(rating)
     if (dbGameRating.totalRatings === 0) {
       gameRating.value = '0'
+      numberOfRatings.value = 0
     } else {
       gameRating.value = dbGameRating.formattedAverageString
       numberOfRatings.value = dbGameRating.totalRatings

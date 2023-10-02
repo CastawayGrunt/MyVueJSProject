@@ -48,7 +48,7 @@ export const useUserStore = defineStore('user', {
   state: () => {
     return {
       user: null as FireUser | null,
-      games: null as GameType[] | null
+      gamesData: null as GameType[] | null
     }
   },
   getters: {
@@ -170,12 +170,13 @@ export const useUserStore = defineStore('user', {
     },
     async getGames() {
       if (this.user) {
+        const userGames = this.user.games
         const tempGames = []
-        for (const game of this.user.games) {
+        for (const game of userGames) {
           const gameData = await this.getGame(game.gameId)
           tempGames.push(gameData)
         }
-        return (this.games = tempGames), tempGames
+        return (this.gamesData = tempGames), tempGames
       }
     },
     async getGame(gameId: string) {
@@ -208,14 +209,14 @@ export const useUserStore = defineStore('user', {
         const mappedGame: GameCollection = {
           gameId: newGame.bggId,
           name: newGame.name,
-          rating: NaN,
+          rating: 0,
           comment: ''
         }
 
         await addFireUserGame(this.user, mappedGame)
         const gameData = await this.getGame(newGame.bggId)
 
-        this.games?.push(gameData)
+        this.gamesData?.push(gameData)
         this.user.games.push(mappedGame)
         return
       }
@@ -264,7 +265,7 @@ export const useUserStore = defineStore('user', {
       }
     },
     async updateGameRating(game: GameType, rating: number) {
-      if (!this.games || !this.user) {
+      if (!this.gamesData || !this.user) {
         return false
       }
 
@@ -279,9 +280,9 @@ export const useUserStore = defineStore('user', {
       if (currentRating === null) {
         await changeFireGameRating(game, rating, true)
         const updatedGame = await this.getGame(game.bggId)
-        const index = this.games.findIndex((g) => g.bggId === game.bggId)
+        const index = this.gamesData.findIndex((g) => g.bggId === game.bggId)
         if (index >= 0) {
-          this.games[index] = updatedGame
+          this.gamesData[index] = updatedGame
         }
       }
 
@@ -290,15 +291,15 @@ export const useUserStore = defineStore('user', {
         await changeFireGameRating(game, rating, true)
 
         const updatedGame = await this.getGame(game.bggId)
-        const index = this.games.findIndex((g) => g.bggId === game.bggId)
+        const index = this.gamesData.findIndex((g) => g.bggId === game.bggId)
         if (index >= 0) {
-          this.games[index] = updatedGame
+          this.gamesData[index] = updatedGame
         }
       }
       return true
     },
     async updateGameComment(game: GameCollection, comment: string) {
-      if (!this.games || !this.user) {
+      if (!this.gamesData || !this.user) {
         return false
       }
 
@@ -312,16 +313,19 @@ export const useUserStore = defineStore('user', {
     },
     async deleteUserGame(game: GameType) {
       if (this.user) {
-        const gameIndex = this.user.games.findIndex((g) => g.gameId === game.bggId)
-        const GametoRemove = this.user.games[gameIndex]
+        const userStoreGameIndex = this.user.games.findIndex((g) => g.gameId === game.bggId)
+        const gameStoreIndex = this.gamesData?.findIndex((g) => g.bggId === game.bggId)
+        const gameToRemove = this.user.games[userStoreGameIndex]
 
-        if (gameIndex === -1) {
+        console.log('gameToRemove', gameToRemove)
+        if (userStoreGameIndex === -1 || gameStoreIndex === -1 || gameStoreIndex === undefined) {
           return false
         }
-        if (gameIndex > -1) {
-          await deleteFireUserGame(this.user, GametoRemove)
-          this.user.games.splice(gameIndex, 1)
-          this.games?.splice(gameIndex, 1)
+        if (userStoreGameIndex > -1 && gameStoreIndex > -1) {
+          await deleteFireUserGame(this.user, gameToRemove)
+
+          this.user.games.splice(userStoreGameIndex, 1)
+          this.gamesData?.splice(gameStoreIndex, 1)
 
           return true
         }
