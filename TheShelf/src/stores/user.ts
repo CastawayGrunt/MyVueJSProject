@@ -281,7 +281,7 @@ export const useUserStore = defineStore('user', {
         await updateFireUser(this.user)
       }
 
-      if (currentRating === null) {
+      if (currentRating === 0) {
         await changeFireGameRating(game, rating, true)
         const updatedGame = await this.getGame(game.bggId)
         const index = this.gamesData.findIndex((g) => g.bggId === game.bggId)
@@ -321,12 +321,18 @@ export const useUserStore = defineStore('user', {
         const gameStoreIndex = this.gamesData?.findIndex((g) => g.bggId === game.bggId)
         const gameToRemove = this.user.games[userStoreGameIndex]
 
-        console.log('gameToRemove', gameToRemove)
         if (userStoreGameIndex === -1 || gameStoreIndex === -1 || gameStoreIndex === undefined) {
           return false
         }
         if (userStoreGameIndex > -1 && gameStoreIndex > -1) {
           await deleteFireUserGame(this.user, gameToRemove)
+
+          for (const play of this.user.plays) {
+            if (play.gameId === game.bggId) {
+              await deleteFireUserGamePlay(this.user, play)
+              this.user.plays.splice(this.user.plays.indexOf(play), 1)
+            }
+          }
 
           this.user.games.splice(userStoreGameIndex, 1)
           this.gamesData?.splice(gameStoreIndex, 1)

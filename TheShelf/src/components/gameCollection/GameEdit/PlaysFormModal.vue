@@ -72,10 +72,10 @@
                 <label class="custom-control-label" :for="`winner ${player.name}`">Winner</label>
               </div>
             </div>
-            <div class="d-flex flex-column md:flex-row align-items-center">
+            <div class="d-flex flex-column md:flex-row md:align-items-center">
               <button
                 type="button"
-                class="btn btn-primary btn-user mb-2 md:mb-0 btn-block"
+                class="btn btn-primary btn-user mb-2 md:mb-0 flex-fill"
                 @click.prevent="addPlayer()"
               >
                 Add Player
@@ -83,7 +83,7 @@
               <button
                 v-if="newPlay.players.length > 0"
                 type="button"
-                class="btn btn-danger btn-user md:ml-2 btn-block"
+                class="btn btn-danger btn-user md:ml-2 flex-fill"
                 @click.prevent="removePlayer()"
               >
                 Remove Player

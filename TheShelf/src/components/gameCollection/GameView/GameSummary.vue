@@ -54,7 +54,6 @@
                   >
                     View Game
                   </button>
-                  <button class="dropdown-item" @click.prevent="$emit('logPlay')">Log Play</button>
                   <div class="dropdown-divider"></div>
                   <button
                     class="dropdown-item text-danger"
@@ -68,7 +67,7 @@
               </div>
             </div>
 
-            <div class="d-flex flex-column md:flex-row pl-4 flex-wrap">
+            <div class="pl-4 row">
               <LabelText
                 class="col-4 col-md-4 col-lg-3 col-xl-2"
                 label="Players"
@@ -130,7 +129,6 @@
                   >
                     View Game
                   </button>
-                  <button class="dropdown-item" @click.prevent="$emit('logPlay')">Log Play</button>
                   <div class="dropdown-divider"></div>
                   <button
                     class="dropdown-item text-danger"

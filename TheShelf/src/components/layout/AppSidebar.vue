@@ -62,7 +62,6 @@ const linkToggleSidebar = () => {
 watch(
   () => width.value,
   (newWidth, oldWidth) => {
-    console.log(newWidth, oldWidth)
     if (newWidth > 768 && oldWidth < 768) {
       openSidebar()
     } else if (newWidth < 768 && oldWidth > 768) {
@@ -93,7 +92,6 @@ onMounted(() => {
     openSidebar()
   }
   if (width.value < 768) {
-    console.log('close')
     closeSidebar()
   }
 })

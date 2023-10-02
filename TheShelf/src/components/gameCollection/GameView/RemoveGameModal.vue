@@ -24,7 +24,8 @@
         <div class="modal-body">
           <p class="text-lg">
             Are you sure you want to remove <span class="font-weight-bold" v-html="name" /> from
-            your collection?
+            your collection? This action cannot be undone and will remove all plays associated with
+            this game.
           </p>
         </div>
 

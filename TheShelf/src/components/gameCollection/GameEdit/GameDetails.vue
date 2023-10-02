@@ -37,22 +37,22 @@
               >
                 Log Play
               </button>
-              <!-- <div class="dropdown-divider"></div>
+              <div class="dropdown-divider"></div>
               <button
                 class="dropdown-item text-danger"
                 data-toggle="modal"
                 data-target="#removeGameModal"
-                @click.prevent="showRemoveGameModal()"
+                @click.prevent="showRemoveGameModal(game)"
               >
                 Remove Game
-              </button> -->
+              </button>
             </div>
           </div>
         </div>
 
         <div class="p-2">
           <div class="d-flex flex-column md:flex-row">
-            <div class="md:col-4 p-2 d-flex align-items-center">
+            <div class="md:col-4 p-2 d-flex align-items-center md:max-h-16rem md:max-w-12rem">
               <img :src="game?.image" class="card-img img-fluid" />
             </div>
             <div class="p-3 d-flex flex-column">
@@ -74,50 +74,16 @@
           </div>
           <div class="d-flex flex-column p-3">
             <form>
-              <div class="d-flex flex-column md:flex-row">
+              <div class="d-flex flex-column md:flex-row justify-content-between">
                 <div class="label font-weight-bold d-flex align-items-center">
                   Your Rating:
-                  <div class="rating">
-                    <input
-                      type="radio"
-                      name="rating"
-                      :value="5"
-                      id="5"
-                      v-model="userRating"
-                    /><label for="5">&#9734;</label>
-                    <input
-                      type="radio"
-                      name="userRating"
-                      :value="4"
-                      id="4"
-                      v-model="userRating"
-                    /><label for="4">&#9734;</label>
-                    <input
-                      type="radio"
-                      name="userRating"
-                      :value="3"
-                      id="3"
-                      v-model="userRating"
-                    /><label for="3">&#9734;</label>
-                    <input
-                      type="radio"
-                      name="userRating"
-                      :value="2"
-                      id="2"
-                      v-model="userRating"
-                    /><label for="2">&#9734;</label>
-                    <input
-                      type="radio"
-                      name="userRating"
-                      :value="1"
-                      id="1"
-                      v-model="userRating"
-                    /><label for="1">&#9734;</label>
+                  <div class="ml-2">
+                    <Rating v-model="userRating" :cancel="false" />
                   </div>
                 </div>
                 <button
                   v-if="ratingChanged"
-                  class="btn btn-outline-primary mb-2 md:ml-2"
+                  class="btn btn-outline-primary btn-sm mt-2 md:mt-0 mb-2 md:ml-2"
                   type="submit"
                   @click.prevent="submitRating(userRating)"
                 >
@@ -125,19 +91,19 @@
                 </button>
               </div>
             </form>
-            <div class="d-flex align-items-center">
+            <div class="d-flex align-items-center justify-content-between">
               <LabelText label="Comment" :text="`${userGameInfo.comment}`" />
               <button
                 data-toggle="modal"
                 data-target="#addCommentModal"
-                class="btn btn-outline-primary btn-sm mb-2 ml-2"
+                class="btn btn-outline-primary btn-sm mb-2 ml-2 d-none d-sm-inline-block"
                 type="submit"
                 @click.prevent="showAddComment()"
               >
                 {{ commentButtonText }}
               </button>
             </div>
-            <div class="d-flex align-items-center">
+            <div class="d-flex align-items-center justify-content-between">
               <LabelText label="Plays" text="" />
               <button
                 data-toggle="modal"
@@ -166,6 +132,12 @@
       @cancelRemovePlay="resetActivePlay"
       @removePlay="removePlay"
     />
+    <RemoveGameModal
+      v-if="removeGameModalVisible"
+      :game="activeGame"
+      @deleteGame="removeGame"
+      @cancelDelete="hideRemoveGameModal()"
+    />
     <CommentModal
       v-if="commentModalVisible"
       :game="userGameInfo"
@@ -179,16 +151,20 @@
 import LabelText from '@/components/gameCollection/LabelText.vue'
 import GameRating from '@/components/gameCollection/GameView/GameRating.vue'
 import CommentModal from '@/components/gameCollection/GameEdit/CommentModal.vue'
+import RemoveGameModal from '@/components/gameCollection/GameView/RemoveGameModal.vue'
 import PlaysTable from './PlaysTable.vue'
 import PlaysFormModal from './PlaysFormModal.vue'
 import RemovePlayModal from './RemovePlayModal.vue'
 import { type GameType } from '@/services/fireGameData'
-import { ref, onMounted, watch } from 'vue'
 import type { GameCollection, Plays } from '@/services/fireUserData'
+import { ref, onMounted, watch } from 'vue'
+import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 import { useToast } from 'primevue/usetoast'
+import Rating from 'primevue/rating'
 
 const userStore = useUserStore()
+const router = useRouter()
 const toast = useToast()
 
 const props = defineProps<{
@@ -198,7 +174,7 @@ const props = defineProps<{
 }>()
 
 const userRating = ref(0)
-const ratingChanged = ref(true)
+const ratingChanged = ref(false)
 const logGameModalVisible = ref(false)
 const commentModalVisible = ref(false)
 const commentButtonText = ref('')
@@ -293,14 +269,39 @@ onMounted(() => {
   setCommentButtonText(props.userGameInfo.comment)
 })
 
-// const removeGameModalVisible = ref(false)
+const removeGameModalVisible = ref(false)
+const activeGame = ref({} as GameType)
 
-// const showRemoveGameModal = () => {
-//   removeGameModalVisible.value = true
-// }
-// const hideRemoveGameModal = () => {
-//   removeGameModalVisible.value = false
-// }
+const showRemoveGameModal = (data: GameType) => {
+  removeGameModalVisible.value = true
+  activeGame.value = data
+}
+
+const hideRemoveGameModal = () => {
+  removeGameModalVisible.value = false
+  activeGame.value = {} as GameType
+}
+
+const removeGame = async (game: GameType) => {
+  const gameRemoved = await useUserStore().deleteUserGame(game)
+  if (gameRemoved) {
+    toast.add({
+      severity: 'success',
+      summary: 'Game Removed',
+      detail: `${game.name} has been removed from your collection`,
+      life: 3000
+    })
+    router.replace({ name: 'games' })
+  } else {
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: `There was an error removing ${game.name} from your collection`,
+      life: 3000
+    })
+  }
+}
+
 const showLogPlay = () => {
   logGameModalVisible.value = true
 }
@@ -318,44 +319,6 @@ const hideAddComment = () => {
 </script>
 
 <style scoped>
-.rating {
-  display: flex;
-  flex-direction: row-reverse;
-  justify-content: start;
-}
-
-.rating > input {
-  display: none;
-}
-
-.rating > label {
-  position: relative;
-  width: 1em;
-  font-size: 30px;
-  font-weight: 300;
-  color: #4e73df;
-  cursor: pointer;
-}
-
-.rating > label::before {
-  content: '\2605';
-  position: absolute;
-  opacity: 0;
-}
-
-.rating > label:hover:before,
-.rating > label:hover ~ label:before {
-  opacity: 1 !important;
-}
-
-.rating > input:checked ~ label:before {
-  opacity: 1;
-}
-
-.rating:hover > input:checked ~ label:before {
-  opacity: 0.4;
-}
-
 /* scroll bar */
 ::-webkit-scrollbar {
   width: 10px;
