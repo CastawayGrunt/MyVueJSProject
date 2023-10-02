@@ -63,9 +63,7 @@ const filterGames = (query: string) => {
 const loadCollection = async () => {
   loadingGamesStatus.value = loadingGamesEnum.resultsLoading
   const gamesDb = useUserStore().gamesData
-  const user = useUserStore().user
-  console.log('load collection games', gamesDb)
-  console.log('load collection user', user)
+
   if (!gamesDb) {
     const fetchedGames = await useUserStore().getGames()
     if (fetchedGames) {

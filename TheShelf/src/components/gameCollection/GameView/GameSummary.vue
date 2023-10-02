@@ -68,7 +68,7 @@
               </div>
             </div>
 
-            <div class="d-flex flex-column md:flex-row pl-4">
+            <div class="d-flex flex-column md:flex-row pl-4 flex-wrap">
               <LabelText
                 class="col-4 col-md-4 col-lg-3 col-xl-2"
                 label="Players"

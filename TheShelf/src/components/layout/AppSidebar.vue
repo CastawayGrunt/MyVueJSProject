@@ -40,7 +40,13 @@
 
 <script setup lang="ts">
 import { RouterLink } from 'vue-router'
-import { setActiveLink, removeActiveLink, toggleSidebar } from '@/helpers/sidebarHelper'
+import {
+  setActiveLink,
+  removeActiveLink,
+  toggleSidebar,
+  closeSidebar,
+  openSidebar
+} from '@/helpers/sidebarHelper'
 import { useWindowSize } from '@vueuse/core'
 import { onMounted, watch } from 'vue'
 import router from '@/router'
@@ -56,8 +62,11 @@ const linkToggleSidebar = () => {
 watch(
   () => width.value,
   (newWidth, oldWidth) => {
-    if (newWidth < 768 && oldWidth > 768) {
-      toggleSidebar()
+    console.log(newWidth, oldWidth)
+    if (newWidth > 768 && oldWidth < 768) {
+      openSidebar()
+    } else if (newWidth < 768 && oldWidth > 768) {
+      closeSidebar()
     }
   }
 )
@@ -80,6 +89,13 @@ const path = (route: string) => {
 
 onMounted(() => {
   setActiveLink(path(router.currentRoute.value.path))
+  if (width.value > 768) {
+    openSidebar()
+  }
+  if (width.value < 768) {
+    console.log('close')
+    closeSidebar()
+  }
 })
 </script>
 
