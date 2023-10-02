@@ -23,7 +23,7 @@
         </div>
 
         <div class="modal-body">
-          <form class="user">
+          <form>
             <div class="form-group">
               <input
                 type="date"
@@ -72,13 +72,23 @@
                 <label class="custom-control-label" :for="`winner ${player.name}`">Winner</label>
               </div>
             </div>
-            <button
-              type="button"
-              class="btn btn-primary btn-user btn-block"
-              @click.prevent="addPlayer()"
-            >
-              Add Player
-            </button>
+            <div class="d-flex flex-column md:flex-row align-items-center">
+              <button
+                type="button"
+                class="btn btn-primary btn-user mb-2 md:mb-0 btn-block"
+                @click.prevent="addPlayer()"
+              >
+                Add Player
+              </button>
+              <button
+                v-if="newPlay.players.length > 0"
+                type="button"
+                class="btn btn-danger btn-user md:ml-2 btn-block"
+                @click.prevent="removePlayer()"
+              >
+                Remove Player
+              </button>
+            </div>
           </form>
         </div>
         <div class="modal-footer">
@@ -130,6 +140,10 @@ const addPlayer = () => {
     score: NaN,
     winner: false
   })
+}
+
+const removePlayer = () => {
+  newPlay.value.players.pop()
 }
 
 const onPlaySubmit = async (play: Plays) => {
