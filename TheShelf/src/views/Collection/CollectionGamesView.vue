@@ -22,7 +22,6 @@
       />
     </div>
     <p v-else class="d-flex justify-content-center">No games found</p>
-    <Toast />
   </div>
 </template>
 

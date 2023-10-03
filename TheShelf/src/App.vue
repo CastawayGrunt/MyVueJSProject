@@ -20,6 +20,7 @@ const useFrame = (): boolean => {
 <template>
   <AppFrame v-if="useFrame()" />
   <AppNoFrame v-else />
+  <Toast />
 </template>
 
 <style scoped></style>

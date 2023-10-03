@@ -35,7 +35,6 @@
               <i class="fa fa-trash pr-2"></i>Remove Profile Picture
             </button>
           </div>
-          <Toast />
         </div>
       </div>
     </div>

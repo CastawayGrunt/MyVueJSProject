@@ -25,7 +25,6 @@
     @cancelAddGame="resetActiveGame"
     @addGame="addGame"
   />
-  <Toast />
 </template>
 
 <script lang="ts" setup>

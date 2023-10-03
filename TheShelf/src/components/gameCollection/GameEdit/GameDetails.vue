@@ -143,7 +143,6 @@
       :game="userGameInfo"
       @cancelAddComment="hideAddComment"
     />
-    <Toast />
   </div>
 </template>
 

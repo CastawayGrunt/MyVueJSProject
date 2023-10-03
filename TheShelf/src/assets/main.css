@@ -2,6 +2,10 @@ input.p-inputtext.p-component.p-password-input {
     width: 100% !important;
   }
 
- div.p-datepicker.p-component.p-ripple-disabled {
+div.p-datepicker.p-component.p-ripple-disabled {
    z-index: 9999 !important;
   }
+
+div.p-toast.p-component.p-toast-top-right.p-ripple-disabled{
+  max-width: 90% !important;
+} 

@@ -15,7 +15,6 @@
         >
           Request Password Reset Email
         </button>
-        <Toast />
       </div>
     </div>
   </div>
