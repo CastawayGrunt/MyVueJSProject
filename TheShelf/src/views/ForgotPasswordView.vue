@@ -85,10 +85,8 @@ const email = defineComponentBinds('email')
 
 const onSubmit = handleSubmit(async (values) => {
   const email = `${values.email}`
-  console.log(email)
   const success = await userStore.requestChangePasswordEmail(email)
 
-  console.log(success)
   if (success) {
     resetForm()
     $router.push('/login')
