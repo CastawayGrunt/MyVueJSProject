@@ -13,10 +13,10 @@
   >
     <p class="text-center">No results found, try again</p>
   </div>
-
   <SearchTable
     v-else-if="loadingGamesStatus === loadingGamesEnum.resultsLoaded"
     :games="results"
+    :addingGame="addingGame"
     @openAddGameModal="openAddGameModal"
   />
   <AddGameModal
@@ -48,6 +48,7 @@ import { findGameName } from '@/helpers/stringHelpers'
 const results = ref([] as GameSearchResponse[])
 const loadingGamesStatus = ref('init')
 const loadingGameStatus = ref('init')
+const addingGame = ref(false)
 const activeGame = ref({} as GameIdResponse)
 const toast = useToast()
 
@@ -101,9 +102,11 @@ const resetActiveGame = () => {
 const addGame = async (game: GameIdResponse) => {
   const userStore = useUserStore()
 
+  addingGame.value = true
   await userStore.addGame(game)
   const name = findGameName(game)
 
+  addingGame.value = false
   toast.add({
     severity: 'success',
     summary: 'Game Added',

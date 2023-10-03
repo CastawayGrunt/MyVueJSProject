@@ -1,9 +1,17 @@
 <template>
   <div class="card p-3">
-    <DataTable :value="games" paginator stripedRows :rows="10" :rowsPerPageOptions="[10, 20, 50]">
+    <DataTable
+      :value="games"
+      paginator
+      stripedRows
+      :rows="10"
+      :rowsPerPageOptions="[10, 20, 50]"
+      :paginatorTemplate="paginatorTemplate"
+      currentPageReportTemplate="{totalRecords} results"
+    >
       <Column field="name.@_value" sortable header="Name">
         <template #body="slotProps">
-          {{ slotProps.data.name['@_value'] }}
+          <span v-html="slotProps.data.name['@_value']"></span>
         </template>
       </Column>
       <Column field="yearpublished.@_value" sortable header="Year Published">
@@ -19,7 +27,7 @@
       <Column header="Action">
         <template #body="slotProps">
           <button
-            :disabled="gameExists(slotProps.data['@_id'])"
+            :disabled="gameExists(slotProps.data['@_id']) || addingGame"
             class="btn btn-primary btn-sm"
             data-toggle="modal"
             data-target="#addGameModal"
@@ -40,15 +48,19 @@ import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import { onMounted, ref, watch } from 'vue'
 import { useWindowSize } from '@vueuse/core'
+import { setPaginatorTemplate } from '@/helpers/paginatorTemplateHelper'
 
 const { width } = useWindowSize()
+const userStore = useUserStore()
 
 defineProps<{
   games: GameSearchResponse[]
+  addingGame: boolean
 }>()
 
+const paginatorTemplate = ref('')
 const showType = ref(true)
-const userStore = useUserStore()
+
 const gameExists = (gameId: number): boolean => {
   let gameExists = false
   userStore.user?.games?.find((game) => {
@@ -69,10 +81,14 @@ const updateShowType = (width: number) => {
 
 onMounted(() => {
   updateShowType(width.value)
+  paginatorTemplate.value = setPaginatorTemplate(width.value)
 })
 
-watch(width, (newWidth) => {
+watch(width, (newWidth, oldWidth) => {
   updateShowType(newWidth)
+  if (newWidth !== oldWidth) {
+    paginatorTemplate.value = setPaginatorTemplate(newWidth)
+  }
 })
 </script>
 

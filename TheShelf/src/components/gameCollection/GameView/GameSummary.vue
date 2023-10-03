@@ -9,6 +9,7 @@
       :rowsPerPageOptions="[6, 12, 24]"
       :sortOrder="sortOrder"
       :sortField="sortField"
+      :paginatorTemplate="paginatorTemplate"
     >
       <template #header>
         <div class="flex justify-content-between align-items-center">
@@ -143,7 +144,7 @@
             </div>
 
             <div class="d-flex flex-column md:flex-row">
-              <div class="md:col-4 p-2 d-flex align-items-center">
+              <div class="col-7 md:col-4 p-2 align-self-center">
                 <img :src="slotProps.data.image" class="card-img img-fluid" />
               </div>
               <div class="p-3 d-flex flex-column">
@@ -187,8 +188,9 @@ import LabelText from '@/components/gameCollection/LabelText.vue'
 import GameRating from '@/components/gameCollection/GameView/GameRating.vue'
 import { type GameType } from '@/services/fireGameData'
 import { useRouter } from 'vue-router'
-import { onMounted, ref } from 'vue'
-import { watchArray } from '@vueuse/core'
+import { onMounted, ref, watch } from 'vue'
+import { watchArray, useWindowSize } from '@vueuse/core'
+import { setPaginatorTemplate } from '@/helpers/paginatorTemplateHelper'
 
 const props = defineProps<{
   games: GameType[]
@@ -206,6 +208,8 @@ const sortOptions = ref([
   { label: 'Year Old to New', value: 'yearPublished' },
   { label: 'Year New to Old', value: '!yearPublished' }
 ])
+const paginatorTemplate = ref('')
+const { width } = useWindowSize()
 
 const viewGameClicked = (bggId: string) => {
   router.push({ name: 'viewGame', params: { id: bggId } })
@@ -235,8 +239,18 @@ watchArray(
   }
 )
 
+watch(
+  () => width.value,
+  (newWidth, oldWidth) => {
+    if (newWidth !== oldWidth) {
+      paginatorTemplate.value = setPaginatorTemplate(newWidth)
+    }
+  }
+)
+
 onMounted(() => {
   gamesView.value = props.games
+  paginatorTemplate.value = setPaginatorTemplate(width.value)
 })
 </script>
 
