@@ -107,6 +107,7 @@ export const useUserStore = defineStore('user', {
     async logout() {
       await logoutUser()
       this.user = null
+      this.gamesData = null
       userLocalStorage.value = null
     },
     async register({ email, password }: Credentials, user: FireUser) {
