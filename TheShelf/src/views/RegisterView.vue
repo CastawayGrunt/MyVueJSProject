@@ -107,7 +107,7 @@
                     <hr />
                   </form>
                   <div class="text-center">
-                    <!-- <RouterLink to="/forgotpassword" class="small">Forgot Password?</RouterLink> -->
+                    <RouterLink to="/forgotpassword" class="small">Forgot Password?</RouterLink>
                   </div>
                   <div class="text-center">
                     <RouterLink class="small" to="/login"

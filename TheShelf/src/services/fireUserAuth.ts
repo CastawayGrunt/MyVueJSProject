@@ -52,7 +52,7 @@ export const updateUserProfile = async (user: FireRegisterUserInfo) => {
 
 export const sendPasswordEmail = async (email: string) => {
   const auth = getAuth()
-  if (!auth.currentUser) {
+  if (!auth) {
     return false
   }
   await sendPasswordResetEmail(auth, email)
