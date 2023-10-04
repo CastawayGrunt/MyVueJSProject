@@ -158,7 +158,6 @@ export async function deleteFireUserGamePlay(user: FireUser, play: Plays) {
   const userRef = doc(db, 'users', user.id)
   const userSnap = await getDoc(userRef)
 
-  console.log('playtoremove', play)
   if (!userSnap.exists()) {
     throw new Error('User does not exist')
   }

@@ -20,7 +20,14 @@ const useFrame = (): boolean => {
 <template>
   <AppFrame v-if="useFrame()" />
   <AppNoFrame v-else />
-  <Toast />
+  <Toast>
+    <template #message="slotProps">
+      <div class="mr-auto">
+        <div class="font-bold text-xl mb-3">{{ slotProps.message.summary }}</div>
+        <div class="toast-details" v-html="slotProps.message.detail" />
+      </div>
+    </template>
+  </Toast>
 </template>
 
 <style scoped></style>

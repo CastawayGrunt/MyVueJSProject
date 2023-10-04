@@ -24,7 +24,8 @@ import {
   addFireGame,
   getFireGame,
   type GameType,
-  changeFireGameRating
+  changeFireGameRating,
+  getFireGames
 } from '@/services/fireGameData'
 import { useStorage } from '@vueuse/core'
 import { deleteUserImage, uploadUserImage } from '@/services/fireFileBucket'
@@ -42,7 +43,9 @@ const defaultUserLocal: FireUser = {
   lastPlayed: '',
   mostPlayed: ''
 }
+const defaultGameDataLocal: GameType[] = []
 const userLocalStorage = useStorage('user', defaultUserLocal)
+const gameDataLocalStorage = useStorage('gameData', defaultGameDataLocal)
 
 export const useUserStore = defineStore('user', {
   state: () => {
@@ -63,20 +66,28 @@ export const useUserStore = defineStore('user', {
         return (this.user = null)
       }
       return (this.user = userLocalStorage.value)
+    },
+    getGamesData(): GameType[] | null {
+      if (gameDataLocalStorage.value.length === 0) {
+        return (this.gamesData = null)
+      }
+      return (this.gamesData = gameDataLocalStorage.value)
     }
   },
   actions: {
     init() {
-      if (this.user) {
+      if (this.user && this.gamesData) {
         return
       }
       if (userLocalStorage.value.id === '' || userLocalStorage === null) {
         return
       }
       this.user = userLocalStorage.value
+      this.gamesData = gameDataLocalStorage.value
     },
     async login({ email, password }: Credentials) {
       userLocalStorage.value = null
+      gameDataLocalStorage.value = null
       try {
         const userAccount = await loginUser({ email, password })
 
@@ -109,6 +120,7 @@ export const useUserStore = defineStore('user', {
       this.user = null
       this.gamesData = null
       userLocalStorage.value = null
+      gameDataLocalStorage.value = null
     },
     async register({ email, password }: Credentials, user: FireUser) {
       const registeredUser = await registerUser({ email, password })
@@ -175,13 +187,12 @@ export const useUserStore = defineStore('user', {
     },
     async getGames() {
       if (this.user) {
-        const userGames = this.user.games
-        const tempGames = []
-        for (const game of userGames) {
-          const gameData = await this.getGame(game.gameId)
-          tempGames.push(gameData)
+        if (this.gamesData === null || this.gamesData?.length === 0) {
+          const userGames = this.user.games.map((g) => g.gameId)
+          const tempGames = await getFireGames(userGames)
+          gameDataLocalStorage.value = tempGames
+          return (this.gamesData = tempGames), tempGames
         }
-        return (this.gamesData = tempGames), tempGames
       }
     },
     async getGame(gameId: string) {

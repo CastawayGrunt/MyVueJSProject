@@ -1,5 +1,15 @@
 import { useFirestore } from 'vuefire'
-import { doc, getDoc, setDoc, updateDoc, increment } from 'firebase/firestore'
+import {
+  doc,
+  getDoc,
+  setDoc,
+  updateDoc,
+  increment,
+  collection,
+  query,
+  where,
+  getDocs
+} from 'firebase/firestore'
 import type { GameIdResponse } from './boardGamesApi'
 import { findGameName } from '@/helpers/stringHelpers'
 
@@ -34,6 +44,19 @@ export async function getFireGame(id: string) {
     throw new Error('Game does not exist')
   }
   return gameSnap.data()
+}
+
+export async function getFireGames(games: string[]) {
+  const db = useFirestore()
+  const q = query(collection(db, 'games'), where('bggId', 'in', games))
+  const querySnapshot = await getDocs(q)
+
+  const gamesHolding: GameType[] = []
+
+  querySnapshot.forEach((doc) => {
+    gamesHolding.push(doc.data() as GameType)
+  })
+  return gamesHolding
 }
 
 export async function addFireGame(game: GameIdResponse) {
