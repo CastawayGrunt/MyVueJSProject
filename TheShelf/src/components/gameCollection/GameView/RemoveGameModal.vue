@@ -53,7 +53,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import type { GameType } from '@/services/fireGameData'
 
 const name = ref('')
@@ -61,6 +61,13 @@ const name = ref('')
 const props = defineProps<{
   game: GameType
 }>()
+
+watch(
+  () => props.game,
+  () => {
+    name.value = props.game.name ? props.game.name : ''
+  }
+)
 
 onMounted(() => {
   return (name.value = props.game.name ? props.game.name : '')

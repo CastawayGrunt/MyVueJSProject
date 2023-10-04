@@ -6,8 +6,8 @@
       paginator
       :rows="5"
       :rowsPerPageOptions="[5, 10, 20]"
-      sortField="datePlayed"
-      :sortOrder="1"
+      sortField="datePlayed.seconds"
+      :sortOrder="-1"
     >
       <ColumnGroup>
         <Row>
@@ -20,7 +20,11 @@
           <Column field="Actions" header="Actions"></Column>
         </Row>
       </ColumnGroup>
-      <Column field="datePlayed" sortable header="Date"></Column>
+      <Column field="datePlayed.seconds" sortable header="Date">
+        <template #body="slotProps">
+          <span v-html="formatDate(slotProps.data.datePlayed)"></span>
+        </template>
+      </Column>
       <Column field="location" sortable header="Location"></Column>
       <Column field="players.name" header="Players">
         <template #body="slotProps">
@@ -68,6 +72,7 @@ import ColumnGroup from 'primevue/columngroup'
 import Column from 'primevue/column'
 import Row from 'primevue/row'
 import { onMounted, watch, ref } from 'vue'
+import { formatDate } from '@/helpers/dateHelpers'
 
 const props = defineProps<{
   userPlays: Plays[]

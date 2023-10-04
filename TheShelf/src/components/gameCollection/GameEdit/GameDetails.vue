@@ -125,7 +125,7 @@
         </div>
       </div>
     </div>
-    <PlaysFormModal v-if="logGameModalVisible" :game="userGameInfo" @cancelAddPlay="hideLogPlay" />
+    <PlaysFormModal v-if="logGameModalVisible" :game="userGameInfo" @hideForm="hideLogPlay" />
     <RemovePlayModal
       v-if="activePlay"
       :play="activePlay"

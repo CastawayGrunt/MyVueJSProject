@@ -23,72 +23,123 @@
         </div>
 
         <div class="modal-body">
-          <form>
-            <div class="form-group">
-              <input
-                type="date"
-                class="form-control form-control-user"
+          <form @submit="onSubmit" id="playForm">
+            <div class="field d-flex flex-column">
+              <label for="datePlayed">Date Played</label>
+              <Calendar
+                inputId="datePlayed"
                 id="datePlayed"
-                placeholder="Date Played"
-                v-model="newPlay.datePlayed"
+                v-bind="datePlayed"
+                :class="{ 'p-invalid': errors.datePlayed }"
+                aria-describedby="date-error"
+                showIcon
               />
+              <small v-if="errors.datePlayed" class="p-error" id="text-error">{{
+                errors.datePlayed || '&nbsp;'
+              }}</small>
             </div>
-            <div class="form-group">
-              <input
-                type="text"
-                class="form-control form-control-user"
+            <div class="field">
+              <label for="location">Location</label>
+              <InputText
                 id="location"
-                placeholder="Location"
-                v-model="newPlay.location"
+                v-bind="location"
+                type="text"
+                :class="{ 'p-invalid': errors.location }"
+                class="w-100"
+                aria-describedby="text-error"
+                :pt="{ root: { maxlength: '50' } }"
               />
+              <small v-if="errors.location" class="p-error" id="text-error">{{
+                errors.location || '&nbsp;'
+              }}</small>
             </div>
-            <div v-for="player in newPlay.players" :key="player.name">
-              <hr />
-              <div class="form-group">
-                <input
-                  type="text"
-                  class="form-control form-control-user"
-                  :id="`name ${player.name}`"
-                  placeholder="Player Name"
-                  v-model="player.name"
-                />
-              </div>
-              <div class="form-group">
-                <input
-                  type="number"
-                  class="form-control form-control-user"
-                  :id="`playerScore ${player.name}`"
-                  placeholder="Score"
-                  v-model="player.score"
-                />
-              </div>
-              <div class="custom-control custom-checkbox small form-group">
-                <input
-                  type="checkbox"
-                  class="custom-control-input"
-                  :id="`winner ${player.name}`"
-                  v-model="player.winner"
-                />
-                <label class="custom-control-label" :for="`winner ${player.name}`">Winner</label>
-              </div>
-            </div>
-            <div class="d-flex flex-column md:flex-row md:align-items-center">
+            <FieldArray name="players">
+              <fieldset class="InputGroup" v-for="(field, idx) in fields" :key="field.key">
+                <hr class="border-primary" />
+                <div class="form-group">
+                  <div class="field">
+                    <label
+                      class="mr-2"
+                      :for="`name_${idx}`"
+                      v-html="`Player ${idx + 1} Name`"
+                    ></label>
+                    <Field
+                      class="mr-2 rounded"
+                      style="border: 1px solid #ced4da"
+                      :id="`name_${idx}`"
+                      :name="`players[${idx}].name`"
+                      v-slot="{ field }"
+                    >
+                      <InputText
+                        :id="`name_${idx}`"
+                        v-bind="field"
+                        type="text"
+                        class="w-100"
+                        aria-describedby="text-error"
+                        :pt="{ root: { maxlength: '50' } }"
+                      />
+                    </Field>
+                    <ErrorMessage class="text-danger" :name="`players[${idx}].name`" />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <div class="field">
+                    <label class="mr-2" :for="`score_${idx}`">Score</label>
+                    <Field
+                      class="mr-2 rounded"
+                      style="border: 1px solid #ced4da"
+                      :id="`score_${idx}`"
+                      :name="`players[${idx}].score`"
+                      v-slot="{ field }"
+                    >
+                      <InputText
+                        :id="`score_${idx}`"
+                        v-bind="field"
+                        type="text"
+                        class="w-100"
+                        aria-describedby="text-error"
+                        :pt="{ root: { maxlength: '10' } }"
+                      />
+                    </Field>
+                    <ErrorMessage class="text-danger" :name="`players[${idx}].score`" />
+                  </div>
+                </div>
+
+                <div class="d-flex justify-content-between justify-content-center">
+                  <div class="d-flex justify-content-center">
+                    <Field
+                      :name="`players[${idx}].winner`"
+                      type="checkbox"
+                      :value="true"
+                      v-slot="{ field }"
+                    >
+                      <label class="mr-2" :for="`winner_${idx}`">Winner</label>
+                      <input
+                        :id="`winner_${idx}`"
+                        class="checkbox"
+                        type="checkbox"
+                        v-bind="field"
+                        :value="true"
+                      />
+                    </Field>
+                  </div>
+                  <button
+                    type="button"
+                    class="btn btn-danger btn-user md:ml-2"
+                    @click.prevent="remove(idx)"
+                  >
+                    <i class="fas fa-trash-alt"></i>
+                  </button>
+                </div>
+              </fieldset>
               <button
                 type="button"
-                class="btn btn-primary btn-user mb-2 md:mb-0 flex-fill"
-                @click.prevent="addPlayer()"
+                class="btn btn-primary btn-block mt-2"
+                @click.prevent="push({ name: '', score: '', winner: false })"
               >
                 Add Player
               </button>
-              <button
-                v-if="newPlay.players.length > 0"
-                type="button"
-                class="btn btn-danger btn-user md:ml-2 flex-fill"
-                @click.prevent="removePlayer()"
-              >
-                Remove Player
-              </button>
-            </div>
+            </FieldArray>
           </form>
         </div>
         <div class="modal-footer">
@@ -96,15 +147,16 @@
             type="button"
             class="btn btn-outline-secondary"
             data-dismiss="modal"
-            @click.prevent="$emit('cancelAddPlay', resetPlayRef())"
+            @click.prevent="$emit('hideForm', resetForm())"
           >
             Close
           </button>
           <button
             type="button"
             class="btn btn-primary"
+            @click.prevent="$emit('hideForm', onSubmit())"
+            form="playForm"
             data-dismiss="modal"
-            @click.prevent="onPlaySubmit(newPlay)"
           >
             Save play
           </button>
@@ -115,41 +167,56 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue'
-import type { GameCollection, Plays } from '@/services/fireUserData'
+import type { GameCollection } from '@/services/fireUserData'
+import InputText from 'primevue/inputtext'
+import Calendar from 'primevue/calendar'
 import { useUserStore } from '@/stores/user'
 import { useToast } from 'primevue/usetoast'
+import { useForm, FieldArray, useFieldArray, ErrorMessage, Field } from 'vee-validate'
+import * as yup from 'yup'
+import { Timestamp } from 'firebase/firestore'
 
 const userStore = useUserStore()
-const newPlay = ref<Plays>({
-  gameId: '',
-  datePlayed: '',
-  location: '',
-  players: []
-})
 const toast = useToast()
 
 const props = defineProps<{
   game: GameCollection
 }>()
 
-const addPlayer = () => {
-  newPlay.value.players.push({
-    name: '',
-    score: NaN,
-    winner: false
-  })
-}
+const schema = yup.object().shape({
+  datePlayed: yup.date().required().label('Date played'),
+  location: yup.string().required().max(50).label('Location'),
+  players: yup.array().of(
+    yup.object().shape({
+      name: yup.string().required().max(50).label('Name'),
+      score: yup.string().nullable().max(10).label('Score'),
+      winner: yup
+        .boolean()
+        .transform((value) => (value === undefined || value === 'undefined' ? false : true))
+        .label('Winner')
+    })
+  )
+})
 
-const removePlayer = () => {
-  newPlay.value.players.pop()
-}
+const { defineComponentBinds, handleSubmit, resetForm, errors } = useForm({
+  validationSchema: schema
+})
 
-const onPlaySubmit = async (play: Plays) => {
-  const gameid = props.game.gameId
-  play.gameId = gameid
+const { remove, push, fields } = useFieldArray('players')
 
-  const playAdded = await userStore.addGamePlay(props.game, play)
+const datePlayed = defineComponentBinds('datePlayed')
+const location = defineComponentBinds('location')
+
+const onSubmit = handleSubmit(async (values) => {
+  const gameId = props.game.gameId
+  const playtoAdd = {
+    gameId: gameId,
+    datePlayed: Timestamp.fromDate(values.datePlayed),
+    location: values.location,
+    players: values.players ? values.players : []
+  }
+
+  const playAdded = await userStore.addGamePlay(props.game, playtoAdd)
   if (playAdded) {
     toast.add({
       severity: 'success',
@@ -157,18 +224,26 @@ const onPlaySubmit = async (play: Plays) => {
       detail: 'Play has been added to your collection',
       life: 3000
     })
-    resetPlayRef()
+    resetForm()
+  } else {
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: 'Play could not be added to your collection',
+      life: 3000
+    })
   }
-}
-
-const resetPlayRef = () => {
-  newPlay.value = {
-    gameId: '',
-    datePlayed: '',
-    location: '',
-    players: []
-  }
-}
+})
 </script>
 
-<style lang="scss" scoped></style>
+<style scoped>
+input.checkbox {
+  cursor: pointer;
+  width: 20px;
+  height: 20px;
+  transition:
+    background-color 0.15s,
+    border-color 0.15s,
+    box-shadow 0.15s;
+}
+</style>

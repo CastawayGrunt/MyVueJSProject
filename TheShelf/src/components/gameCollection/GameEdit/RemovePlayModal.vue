@@ -55,6 +55,7 @@
 <script setup lang="ts">
 import type { Plays } from '@/services/fireUserData'
 import { onUpdated, onMounted, ref } from 'vue'
+import { formatDate } from '@/helpers/dateHelpers'
 
 const datePlayed = ref('')
 const location = ref('')
@@ -64,7 +65,7 @@ const props = defineProps<{
 }>()
 
 const setModal = () => {
-  datePlayed.value = props.play.datePlayed ? props.play.datePlayed : ''
+  datePlayed.value = props.play.datePlayed ? formatDate(props.play.datePlayed) : ''
   location.value = props.play.location ? props.play.location : ''
 }
 

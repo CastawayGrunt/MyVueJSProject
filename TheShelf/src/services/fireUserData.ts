@@ -7,7 +7,8 @@ import {
   updateDoc,
   deleteDoc,
   arrayRemove,
-  FieldValue
+  FieldValue,
+  Timestamp
 } from 'firebase/firestore'
 
 export type FireUser = {
@@ -25,14 +26,14 @@ export type FireUser = {
 export type Plays = {
   dataAdded?: Date
   gameId: string
-  datePlayed: string
+  datePlayed: Timestamp
   location: string
   players: Players[]
 }
 
 export type Players = {
   name: string
-  score: number
+  score: string
   winner: boolean
 }
 
@@ -157,6 +158,7 @@ export async function deleteFireUserGamePlay(user: FireUser, play: Plays) {
   const userRef = doc(db, 'users', user.id)
   const userSnap = await getDoc(userRef)
 
+  console.log('playtoremove', play)
   if (!userSnap.exists()) {
     throw new Error('User does not exist')
   }
