@@ -154,7 +154,7 @@
           <button
             type="button"
             class="btn btn-primary"
-            @click.prevent="$emit('hideForm', onSubmit())"
+            @click.prevent="onSubmit()"
             form="playForm"
             data-dismiss="modal"
           >
