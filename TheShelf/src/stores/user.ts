@@ -186,7 +186,7 @@ export const useUserStore = defineStore('user', {
       return false
     },
     async getGames() {
-      if (this.user) {
+      if (this.user && this.user?.games.length > 0) {
         if (this.gamesData === null || this.gamesData?.length === 0) {
           const userGames = this.user.games.map((g) => g.gameId)
           const tempGames = await getFireGames(userGames)
